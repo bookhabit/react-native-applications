@@ -1,24 +1,24 @@
 import { StyleSheet, View } from "react-native";
-import { ThemedText } from "@/components/ThemedText";
+import { TextBox } from "@/components/atom/TextBox";
 import { ThemedView } from "@/components/ThemedView";
 
 export default function NotesScreen() {
   return (
     <ThemedView style={styles.container}>
       <View style={styles.content}>
-        <ThemedText type="title" style={styles.title}>
+        <TextBox type="title1" style={styles.title}>
           메모장
-        </ThemedText>
-        <ThemedText style={styles.description}>
+        </TextBox>
+        <TextBox type="body1" style={styles.description}>
           제목과 내용을 포함한 메모를 작성하는 앱입니다.
-        </ThemedText>
-        <ThemedText style={styles.features}>
+        </TextBox>
+        <TextBox type="body3" style={styles.features}>
           주요 기능:
           {"\n"}• 메모 작성/수정/삭제
           {"\n"}• 제목과 내용 분리
           {"\n"}• 메모 검색 기능
           {"\n"}• 로컬 저장소 연동
-        </ThemedText>
+        </TextBox>
       </View>
     </ThemedView>
   );

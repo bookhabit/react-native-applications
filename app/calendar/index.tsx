@@ -1,23 +1,23 @@
 import { StyleSheet, View } from "react-native";
-import { ThemedText } from "@/components/ThemedText";
+import { TextBox } from "@/components/atom/TextBox";
 import { ThemedView } from "@/components/ThemedView";
 
 export default function CalendarScreen() {
   return (
     <ThemedView style={styles.container}>
       <View style={styles.content}>
-        <ThemedText type="title" style={styles.title}>
+        <TextBox type="title1" style={styles.title}>
           캘린더
-        </ThemedText>
-        <ThemedText style={styles.description}>
+        </TextBox>
+        <TextBox type="body1" style={styles.description}>
           일정을 관리하고 달력으로 확인하는 앱입니다.
-        </ThemedText>
-        <ThemedText style={styles.features}>
+        </TextBox>
+        <TextBox type="body3" style={styles.features}>
           주요 기능:
           {"\n"}• 월별/주별 달력 뷰{"\n"}• 일정 추가/수정/삭제
           {"\n"}• 날짜 선택 및 이벤트 처리
           {"\n"}• 로컬 데이터 저장
-        </ThemedText>
+        </TextBox>
       </View>
     </ThemedView>
   );

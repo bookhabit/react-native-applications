@@ -6,7 +6,7 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { ThemedText } from "@/components/ThemedText";
+import { TextBox } from "@/components/atom/TextBox";
 import { ThemedView } from "@/components/ThemedView";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Colors } from "@/constants/Colors";
@@ -29,12 +29,14 @@ const AppCard = ({ title, description, route, icon, color }: AppInfo) => {
   return (
     <TouchableOpacity style={styles.card} onPress={handlePress}>
       <View style={[styles.iconContainer, { backgroundColor: color }]}>
-        <ThemedText style={styles.icon}>{icon}</ThemedText>
+        <TextBox type="body1" style={styles.icon}>
+          {icon}
+        </TextBox>
       </View>
       <View style={styles.cardContent}>
-        <ThemedText type="subtitle" style={styles.cardTitle}>
+        <TextBox type="title4" style={styles.cardTitle}>
           {title}
-        </ThemedText>
+        </TextBox>
       </View>
     </TouchableOpacity>
   );
@@ -129,9 +131,9 @@ export default function AppSelector() {
         contentContainerStyle={{ paddingTop: 24, paddingBottom: bottom + 24 }}
       >
         <View style={styles.header}>
-          <ThemedText style={styles.subtitle}>
+          <TextBox type="body1" style={styles.subtitle}>
             React Native로 구현한 10가지 애플리케이션을 체험해보세요
-          </ThemedText>
+          </TextBox>
         </View>
 
         <View

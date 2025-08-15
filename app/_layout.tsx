@@ -9,11 +9,20 @@ import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { fonts } from "@/constants/fonts";
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    [fonts.Pretendard800]: require("../assets/fonts/Pretendard-ExtraBold.ttf"),
+    [fonts.Pretendard700]: require("../assets/fonts/Pretendard-Bold.ttf"),
+    [fonts.Pretendard600]: require("../assets/fonts/Pretendard-SemiBold.ttf"),
+    [fonts.Pretendard500]: require("../assets/fonts/Pretendard-Medium.ttf"),
+    [fonts.Pretendard400]: require("../assets/fonts/Pretendard-Regular.ttf"),
+    [fonts.Pretendard300]: require("../assets/fonts/Pretendard-Light.ttf"),
+    [fonts.Pretendard200]: require("../assets/fonts/Pretendard-ExtraLight.ttf"),
+    [fonts.Pretendard100]: require("../assets/fonts/Pretendard-Thin.ttf"),
+    [fonts.BMJUA]: require("../assets/fonts/BMJUA.ttf"),
   });
 
   if (!loaded) {

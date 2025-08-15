@@ -1,24 +1,24 @@
 import { StyleSheet, View } from "react-native";
-import { ThemedText } from "@/components/ThemedText";
+import { TextBox } from "@/components/atom/TextBox";
 import { ThemedView } from "@/components/ThemedView";
 
 export default function QuizScreen() {
   return (
     <ThemedView style={styles.container}>
       <View style={styles.content}>
-        <ThemedText type="title" style={styles.title}>
+        <TextBox type="title1" style={styles.title}>
           퀴즈 앱
-        </ThemedText>
-        <ThemedText style={styles.description}>
+        </TextBox>
+        <TextBox type="body1" style={styles.description}>
           재미있는 퀴즈를 풀어보는 앱입니다.
-        </ThemedText>
-        <ThemedText style={styles.features}>
+        </TextBox>
+        <TextBox type="body3" style={styles.features}>
           주요 기능:
           {"\n"}• 문제 데이터 관리
           {"\n"}• 사용자 선택 처리
           {"\n"}• 점수 집계 및 결과 출력
           {"\n"}• 진행 상태 저장 및 복원
-        </ThemedText>
+        </TextBox>
       </View>
     </ThemedView>
   );

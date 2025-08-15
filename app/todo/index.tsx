@@ -1,24 +1,24 @@
 import { StyleSheet, View } from "react-native";
-import { ThemedText } from "@/components/ThemedText";
+import { TextBox } from "@/components/atom/TextBox";
 import { ThemedView } from "@/components/ThemedView";
 
 export default function TodoScreen() {
   return (
     <ThemedView style={styles.container}>
       <View style={styles.content}>
-        <ThemedText type="title" style={styles.title}>
+        <TextBox type="title1" style={styles.title}>
           To-Do 리스트
-        </ThemedText>
-        <ThemedText style={styles.description}>
+        </TextBox>
+        <TextBox type="body1" style={styles.description}>
           할 일을 관리하고 완료 상태를 추적하는 앱입니다.
-        </ThemedText>
-        <ThemedText style={styles.features}>
+        </TextBox>
+        <TextBox type="body3" style={styles.features}>
           주요 기능:
           {"\n"}• 할 일 추가/삭제/수정
           {"\n"}• 완료 상태 토글
           {"\n"}• 로컬 저장소 연동
           {"\n"}• 필터링 기능
-        </ThemedText>
+        </TextBox>
       </View>
     </ThemedView>
   );

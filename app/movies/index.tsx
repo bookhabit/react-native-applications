@@ -1,24 +1,24 @@
 import { StyleSheet, View } from "react-native";
-import { ThemedText } from "@/components/ThemedText";
+import { TextBox } from "@/components/atom/TextBox";
 import { ThemedView } from "@/components/ThemedView";
 
 export default function MoviesScreen() {
   return (
     <ThemedView style={styles.container}>
       <View style={styles.content}>
-        <ThemedText type="title" style={styles.title}>
+        <TextBox type="title1" style={styles.title}>
           영화 검색
-        </ThemedText>
-        <ThemedText style={styles.description}>
+        </TextBox>
+        <TextBox type="body1" style={styles.description}>
           영화를 검색하고 즐겨찾기에 추가하는 앱입니다.
-        </ThemedText>
-        <ThemedText style={styles.features}>
+        </TextBox>
+        <TextBox type="body3" style={styles.features}>
           주요 기능:
           {"\n"}• 영화 검색 및 목록 표시
           {"\n"}• 영화 상세 정보 보기
           {"\n"}• 즐겨찾기 추가/제거
           {"\n"}• 검색 최적화 (디바운싱)
-        </ThemedText>
+        </TextBox>
       </View>
     </ThemedView>
   );

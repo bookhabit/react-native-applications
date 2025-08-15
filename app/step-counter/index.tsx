@@ -1,24 +1,24 @@
 import { StyleSheet, View } from "react-native";
-import { ThemedText } from "@/components/ThemedText";
+import { TextBox } from "@/components/atom/TextBox";
 import { ThemedView } from "@/components/ThemedView";
 
 export default function StepCounterScreen() {
   return (
     <ThemedView style={styles.container}>
       <View style={styles.content}>
-        <ThemedText type="title" style={styles.title}>
+        <TextBox type="title1" style={styles.title}>
           만보기
-        </ThemedText>
-        <ThemedText style={styles.description}>
+        </TextBox>
+        <TextBox type="body1" style={styles.description}>
           걸음 수를 측정하고 목표를 달성하는 앱입니다.
-        </ThemedText>
-        <ThemedText style={styles.features}>
+        </TextBox>
+        <TextBox type="body3" style={styles.features}>
           주요 기능:
           {"\n"}• 가속도 센서 데이터 읽기
           {"\n"}• 실시간 걸음 수 계산
           {"\n"}• 목표 설정 및 알림
           {"\n"}• 데이터 저장 및 통계
-        </ThemedText>
+        </TextBox>
       </View>
     </ThemedView>
   );
