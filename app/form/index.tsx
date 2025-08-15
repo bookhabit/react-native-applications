@@ -10,6 +10,13 @@ import {
   ControlledCheckbox,
   ControlledRadioButton,
   ControlledSwitch,
+  ControlledPicker,
+  ControlledSegmentedControl,
+  ControlledDatePicker,
+  ControlledTimePicker,
+  ControlledSlider,
+  ControlledStepper,
+  ControlledImagePicker,
 } from "@/components/form";
 import { FormData } from "@/types/form";
 
@@ -27,6 +34,14 @@ export default function FormScreen() {
       interests: [],
       notifications: false,
       terms: false,
+      category: "",
+      priority: "medium",
+      birthDate: new Date(),
+      birthTime: new Date(),
+      age: 25,
+      rating: 5,
+      quantity: 1,
+      profileImage: "",
     },
   });
 
@@ -152,6 +167,97 @@ export default function FormScreen() {
             control={control}
             name="notifications"
             label="알림 받기"
+          />
+
+          <View style={styles.section}>
+            <TextBox type="body1" style={styles.sectionTitle}>
+              카테고리 선택
+            </TextBox>
+            <ControlledPicker
+              control={control}
+              name="category"
+              label="카테고리"
+              options={[
+                { label: "기술", value: "tech" },
+                { label: "디자인", value: "design" },
+                { label: "마케팅", value: "marketing" },
+                { label: "비즈니스", value: "business" },
+              ]}
+              rules={{ required: "카테고리를 선택해주세요" }}
+            />
+          </View>
+
+          <View style={styles.section}>
+            <TextBox type="body1" style={styles.sectionTitle}>
+              우선순위
+            </TextBox>
+            <ControlledSegmentedControl
+              control={control}
+              name="priority"
+              options={[
+                { label: "낮음", value: "low" },
+                { label: "보통", value: "medium" },
+                { label: "높음", value: "high" },
+              ]}
+            />
+          </View>
+
+          <ControlledDatePicker
+            control={control}
+            name="birthDate"
+            label="생년월일"
+            mode="date"
+          />
+
+          <ControlledTimePicker
+            control={control}
+            name="birthTime"
+            label="출생 시간"
+          />
+
+          <View style={styles.section}>
+            <TextBox type="body1" style={styles.sectionTitle}>
+              나이
+            </TextBox>
+            <ControlledStepper
+              control={control}
+              name="age"
+              minimumValue={1}
+              maximumValue={100}
+              step={1}
+            />
+          </View>
+
+          <View style={styles.section}>
+            <TextBox type="body1" style={styles.sectionTitle}>
+              만족도
+            </TextBox>
+            <ControlledSlider
+              control={control}
+              name="rating"
+              minimumValue={1}
+              maximumValue={5}
+              step={0.5}
+            />
+          </View>
+
+          <View style={styles.section}>
+            <TextBox type="body1" style={styles.sectionTitle}>
+              수량
+            </TextBox>
+            <ControlledStepper
+              control={control}
+              name="quantity"
+              minimumValue={1}
+              maximumValue={10}
+              step={1}
+            />
+          </View>
+
+          <ControlledImagePicker
+            control={control}
+            name="profileImage"
+            label="프로필 이미지"
           />
 
           <ControlledCheckbox

@@ -6,6 +6,14 @@ export interface FormData {
   interests: string[];
   notifications: boolean;
   terms: boolean;
+  category: string;
+  priority: string;
+  birthDate: Date;
+  birthTime: Date;
+  age: number;
+  rating: number;
+  quantity: number;
+  profileImage: string;
 }
 
 export interface FormErrors {
