@@ -5,17 +5,29 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import { Link } from "expo-router";
+import { useRouter } from "expo-router";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Colors } from "@/constants/Colors";
-import { AppInfo } from "@/types/navigation";
+import { AppInfo, isValidRoute } from "@/types/navigation";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const AppCard = ({ title, description, route, icon, color }: AppInfo) => (
-  <Link href={route as any} asChild>
-    <TouchableOpacity style={styles.card}>
+const AppCard = ({ title, description, route, icon, color }: AppInfo) => {
+  const router = useRouter();
+
+  // 타입 안전성을 위한 경로 검증
+  if (!isValidRoute(route)) {
+    return null;
+  }
+
+  const handlePress = () => {
+    // Expo Router의 엄격한 타입 시스템을 우회
+    (router as any).push(`/${route}`);
+  };
+
+  return (
+    <TouchableOpacity style={styles.card} onPress={handlePress}>
       <View style={[styles.iconContainer, { backgroundColor: color }]}>
         <ThemedText style={styles.icon}>{icon}</ThemedText>
       </View>
@@ -25,8 +37,8 @@ const AppCard = ({ title, description, route, icon, color }: AppInfo) => (
         </ThemedText>
       </View>
     </TouchableOpacity>
-  </Link>
-);
+  );
+};
 
 export default function AppSelector() {
   const colorScheme = useColorScheme();
@@ -42,70 +54,70 @@ export default function AppSelector() {
     {
       title: "To-Do 리스트",
       description: "할 일을 관리하고 완료 상태를 추적하세요",
-      route: "/todo",
+      route: "todo",
       icon: "📝",
       color: "#4CAF50",
     },
     {
       title: "날씨 정보",
       description: "현재 위치의 날씨 정보를 확인하세요",
-      route: "/weather",
+      route: "weather",
       icon: "🌤️",
       color: "#2196F3",
     },
     {
       title: "메모장",
       description: "제목과 내용을 포함한 메모를 작성하세요",
-      route: "/notes",
+      route: "notes",
       icon: "📓",
       color: "#FF9800",
     },
     {
       title: "채팅 앱",
       description: "실시간 1:1 채팅을 경험할 수 있는 앱입니다",
-      route: "/chat",
+      route: "chat",
       icon: "💬",
       color: "#9C27B0",
     },
     {
       title: "영화 검색",
       description: "영화를 검색하고 즐겨찾기에 추가하세요",
-      route: "/movies",
+      route: "movies",
       icon: "🎬",
       color: "#E91E63",
     },
     {
       title: "캘린더",
       description: "일정을 관리하고 달력으로 확인하세요",
-      route: "/calendar",
+      route: "calendar",
       icon: "📅",
       color: "#607D8B",
     },
     {
       title: "이미지 갤러리",
       description: "이미지를 업로드하고 관리하세요",
-      route: "/gallery",
+      route: "gallery",
       icon: "🖼️",
       color: "#795548",
     },
     {
       title: "쇼핑몰",
       description: "상품을 둘러보고 장바구니에 담아보세요",
-      route: "/shop",
+      route: "shop",
       icon: "🛒",
       color: "#FF5722",
     },
     {
       title: "퀴즈 앱",
       description: "재미있는 퀴즈를 풀어보세요",
-      route: "/quiz",
+      route: "quiz",
       icon: "🧩",
       color: "#00BCD4",
     },
     {
       title: "만보기",
       description: "걸음 수를 측정하고 목표를 달성하세요",
-      route: "/step-counter",
+      route: "step-counter",
       icon: "👟",
       color: "#8BC34A",
     },

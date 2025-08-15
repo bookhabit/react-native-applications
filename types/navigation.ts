@@ -1,14 +1,14 @@
 export type AppRoute =
-  | "/todo"
-  | "/weather"
-  | "/notes"
-  | "/chat"
-  | "/movies"
-  | "/calendar"
-  | "/gallery"
-  | "/shop"
-  | "/quiz"
-  | "/step-counter";
+  | "todo"
+  | "weather"
+  | "notes"
+  | "chat"
+  | "movies"
+  | "calendar"
+  | "gallery"
+  | "shop"
+  | "quiz"
+  | "step-counter";
 
 export interface AppInfo {
   title: string;
@@ -16,4 +16,20 @@ export interface AppInfo {
   route: AppRoute;
   icon: string;
   color: string;
+}
+
+// 타입 가드 함수
+export function isValidRoute(route: string): route is AppRoute {
+  return [
+    "todo",
+    "weather",
+    "notes",
+    "chat",
+    "movies",
+    "calendar",
+    "gallery",
+    "shop",
+    "quiz",
+    "step-counter",
+  ].includes(route as AppRoute);
 }
