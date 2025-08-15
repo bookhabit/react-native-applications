@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, PanGestureHandler, State } from "react-native";
+import { View, StyleSheet, TouchableOpacity, PanResponder } from "react-native";
 import { TextBox } from "@/components/atom/TextBox";
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
 
@@ -38,19 +38,38 @@ export const Slider: React.FC<SliderProps> = ({
   const percentage = (value - minimumValue) / (maximumValue - minimumValue);
   const thumbPosition = percentage * (trackWidth - thumbSize);
 
-  const handlePanGesture = (event: any) => {
-    if (disabled) return;
+  const panResponder = React.useMemo(
+    () =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => !disabled,
+        onMoveShouldSetPanResponder: () => !disabled,
+        onPanResponderGrant: (evt) => {
+          if (disabled) return;
+          const { locationX } = evt.nativeEvent;
+          updateValueFromPosition(locationX);
+        },
+        onPanResponderMove: (evt) => {
+          if (disabled) return;
+          const { locationX } = evt.nativeEvent;
+          updateValueFromPosition(locationX);
+        },
+      }),
+    [disabled, minimumValue, maximumValue, step]
+  );
 
-    const { translationX } = event.nativeEvent;
-    const newPercentage = Math.max(
-      0,
-      Math.min(1, (translationX + thumbPosition) / (trackWidth - thumbSize))
-    );
+  const updateValueFromPosition = (locationX: number) => {
+    const newPercentage = Math.max(0, Math.min(1, locationX / trackWidth));
     const newValue =
       minimumValue + newPercentage * (maximumValue - minimumValue);
     const steppedValue = Math.round(newValue / step) * step;
 
     onValueChange(Math.max(minimumValue, Math.min(maximumValue, steppedValue)));
+  };
+
+  const handleTrackPress = (event: any) => {
+    if (disabled) return;
+    const { locationX } = event.nativeEvent;
+    updateValueFromPosition(locationX);
   };
 
   return (
@@ -62,22 +81,28 @@ export const Slider: React.FC<SliderProps> = ({
       )}
 
       <View style={styles.sliderContainer}>
-        <View style={styles.track}>
+        <TouchableOpacity
+          style={styles.track}
+          onPress={handleTrackPress}
+          disabled={disabled}
+          activeOpacity={1}
+          {...panResponder.panHandlers}
+        >
           <View style={styles.trackBackground} />
           <View style={[styles.trackFill, { width: `${percentage * 100}%` }]} />
-        </View>
 
-        <View
-          style={[
-            styles.thumb,
-            {
-              left: thumbPosition,
-              opacity: disabled ? 0.5 : 1,
-            },
-          ]}
-        >
-          <View style={styles.thumbInner} />
-        </View>
+          <View
+            style={[
+              styles.thumb,
+              {
+                left: thumbPosition,
+                opacity: disabled ? 0.5 : 1,
+              },
+            ]}
+          >
+            <View style={styles.thumbInner} />
+          </View>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.valueContainer}>
