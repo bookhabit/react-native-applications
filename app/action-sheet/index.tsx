@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
+import * as ExpoImagePicker from "expo-image-picker";
 import { TextBox } from "@/components/atom/TextBox";
 import { ThemedView } from "@/components/ThemedView";
 import { ActionSheet } from "@/components/ui";
@@ -21,16 +22,28 @@ export default function ActionSheetScreen() {
     { label: "삭제", value: "delete", destructive: true },
   ];
 
-  const handleActionSheetSelect = (value: string) => {
+  const requestPermissions = async () => {
+    const { status: cameraStatus } =
+      await ExpoImagePicker.requestCameraPermissionsAsync();
+    const { status: mediaLibraryStatus } =
+      await ExpoImagePicker.requestMediaLibraryPermissionsAsync();
+
+    return {
+      camera: cameraStatus === "granted",
+      mediaLibrary: mediaLibraryStatus === "granted",
+    };
+  };
+
+  const handleActionSheetSelect = async (value: string) => {
     setSelectedOption(value);
     setActionSheetVisible(false);
 
     switch (value) {
       case "camera":
-        Alert.alert("카메라", "카메라가 열립니다.");
+        await handleCameraLaunch();
         break;
       case "gallery":
-        Alert.alert("갤러리", "갤러리가 열립니다.");
+        await handleGalleryLaunch();
         break;
       case "file":
         Alert.alert("파일 선택", "파일 선택기가 열립니다.");
@@ -38,6 +51,59 @@ export default function ActionSheetScreen() {
       case "delete":
         Alert.alert("삭제", "항목이 삭제됩니다.");
         break;
+    }
+  };
+
+  const handleCameraLaunch = async () => {
+    const permissions = await requestPermissions();
+
+    if (!permissions.camera) {
+      Alert.alert("권한 필요", "카메라 접근 권한이 필요합니다.");
+      return;
+    }
+
+    try {
+      const result = await ExpoImagePicker.launchCameraAsync({
+        mediaTypes: ExpoImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        Alert.alert("성공", `카메라로 촬영된 이미지: ${result.assets[0].uri}`);
+      }
+    } catch (error) {
+      console.error("카메라 오류:", error);
+      Alert.alert("오류", "카메라를 열 수 없습니다.");
+    }
+  };
+
+  const handleGalleryLaunch = async () => {
+    const permissions = await requestPermissions();
+
+    if (!permissions.mediaLibrary) {
+      Alert.alert("권한 필요", "갤러리 접근 권한이 필요합니다.");
+      return;
+    }
+
+    try {
+      const result = await ExpoImagePicker.launchImageLibraryAsync({
+        mediaTypes: ExpoImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        Alert.alert(
+          "성공",
+          `갤러리에서 선택된 이미지: ${result.assets[0].uri}`
+        );
+      }
+    } catch (error) {
+      console.error("갤러리 오류:", error);
+      Alert.alert("오류", "갤러리를 열 수 없습니다.");
     }
   };
 

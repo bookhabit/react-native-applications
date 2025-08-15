@@ -1,5 +1,6 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity, Image, Alert } from "react-native";
+import * as ExpoImagePicker from "expo-image-picker";
 import { TextBox } from "@/components/atom/TextBox";
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
 
@@ -27,33 +28,91 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({
   disabled = false,
   containerStyle,
 }) => {
-  const handleImageSelect = () => {
+  const requestPermissions = async () => {
+    const { status: cameraStatus } =
+      await ExpoImagePicker.requestCameraPermissionsAsync();
+    const { status: mediaLibraryStatus } =
+      await ExpoImagePicker.requestMediaLibraryPermissionsAsync();
+
+    return {
+      camera: cameraStatus === "granted",
+      mediaLibrary: mediaLibraryStatus === "granted",
+    };
+  };
+
+  const handleImageSelect = async () => {
     if (disabled) return;
+
+    const permissions = await requestPermissions();
+
+    if (!permissions.camera && !permissions.mediaLibrary) {
+      Alert.alert(
+        "권한 필요",
+        "카메라와 갤러리 접근 권한이 필요합니다. 설정에서 권한을 허용해주세요."
+      );
+      return;
+    }
 
     Alert.alert("이미지 선택", "이미지를 선택하는 방법을 선택하세요", [
       {
         text: "카메라",
-        onPress: () => {
-          // 실제 구현에서는 react-native-image-picker 사용
-          console.log("카메라 열기");
-          // 임시로 더미 이미지 설정
-          onImageSelect("https://via.placeholder.com/200x200");
-        },
+        onPress: () => handleCameraLaunch(permissions.camera),
       },
       {
         text: "갤러리",
-        onPress: () => {
-          // 실제 구현에서는 react-native-image-picker 사용
-          console.log("갤러리 열기");
-          // 임시로 더미 이미지 설정
-          onImageSelect("https://via.placeholder.com/200x200");
-        },
+        onPress: () => handleGalleryLaunch(permissions.mediaLibrary),
       },
       {
         text: "취소",
         style: "cancel",
       },
     ]);
+  };
+
+  const handleCameraLaunch = async (hasPermission: boolean) => {
+    if (!hasPermission) {
+      Alert.alert("권한 필요", "카메라 접근 권한이 필요합니다.");
+      return;
+    }
+
+    try {
+      const result = await ExpoImagePicker.launchCameraAsync({
+        mediaTypes: ExpoImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        onImageSelect(result.assets[0].uri);
+      }
+    } catch (error) {
+      console.error("카메라 오류:", error);
+      Alert.alert("오류", "카메라를 열 수 없습니다.");
+    }
+  };
+
+  const handleGalleryLaunch = async (hasPermission: boolean) => {
+    if (!hasPermission) {
+      Alert.alert("권한 필요", "갤러리 접근 권한이 필요합니다.");
+      return;
+    }
+
+    try {
+      const result = await ExpoImagePicker.launchImageLibraryAsync({
+        mediaTypes: ExpoImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        onImageSelect(result.assets[0].uri);
+      }
+    } catch (error) {
+      console.error("갤러리 오류:", error);
+      Alert.alert("오류", "갤러리를 열 수 없습니다.");
+    }
   };
 
   const handleImageRemove = () => {
@@ -72,7 +131,11 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({
 
       {value ? (
         <View style={styles.imageContainer}>
-          <Image source={{ uri: value }} style={styles.image} />
+          <Image
+            source={{ uri: value }}
+            style={styles.image}
+            resizeMode="cover"
+          />
           <View style={styles.imageOverlay}>
             <TouchableOpacity
               style={styles.removeButton}
@@ -81,6 +144,15 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({
             >
               <TextBox type="body1" style={styles.removeButtonText}>
                 ✕
+              </TextBox>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.changeButton}
+              onPress={handleImageSelect}
+              disabled={disabled}
+            >
+              <TextBox type="body3" style={styles.changeButtonText}>
+                변경
               </TextBox>
             </TouchableOpacity>
           </View>
@@ -183,6 +255,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 8,
     right: 8,
+    flexDirection: "row",
+    gap: 8,
   },
   removeButton: {
     width: 32,
@@ -196,6 +270,19 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  changeButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+    backgroundColor: "rgba(0, 122, 255, 0.9)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  changeButtonText: {
+    color: "#FFFFFF",
+    fontSize: 12,
+    fontWeight: "600",
   },
   helpText: {
     textAlign: "center",

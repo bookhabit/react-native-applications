@@ -33,6 +33,13 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "앱이 갤러리에 접근하여 이미지를 선택할 수 있도록 허용합니다.",
+          "cameraPermission": "앱이 카메라에 접근하여 사진을 촬영할 수 있도록 허용합니다."
+        }
       ]
     ],
     "experiments": {
