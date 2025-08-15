@@ -9,7 +9,9 @@ export type AppRoute =
   | "shop"
   | "quiz"
   | "step-counter"
-  | "form";
+  | "form"
+  | "action-sheet"
+  | "modal";
 
 export interface AppInfo {
   title: string;
@@ -33,5 +35,7 @@ export function isValidRoute(route: string): route is AppRoute {
     "quiz",
     "step-counter",
     "form",
+    "action-sheet",
+    "modal",
   ].includes(route as AppRoute);
 }

@@ -130,6 +130,20 @@ export default function AppSelector() {
       icon: "📝",
       color: "#FF6B6B",
     },
+    {
+      title: "액션시트 테스트",
+      description: "iOS 스타일 액션시트 컴포넌트",
+      route: "action-sheet",
+      icon: "📱",
+      color: "#4ECDC4",
+    },
+    {
+      title: "모달 테스트",
+      description: "다양한 크기의 모달 컴포넌트",
+      route: "modal",
+      icon: "🪟",
+      color: "#45B7D1",
+    },
   ];
 
   return (
