@@ -123,6 +123,13 @@ export default function AppSelector() {
       icon: "👟",
       color: "#8BC34A",
     },
+    {
+      title: "Form 시스템",
+      description: "다양한 입력 컴포넌트와 유효성 검사를 체험하세요",
+      route: "form",
+      icon: "📝",
+      color: "#FF6B6B",
+    },
   ];
 
   return (
