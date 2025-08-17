@@ -2,20 +2,21 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
 import {
-  persistStore,
-  persistReducer,
   FLUSH,
-  REHYDRATE,
   PAUSE,
   PERSIST,
+  persistReducer,
+  persistStore,
   PURGE,
   REGISTER,
+  REHYDRATE,
 } from "redux-persist";
 
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
+import stepCounterReducer from "./stepCounterSlice";
 
 const rootReducer = combineReducers({
-  // slice name
+  stepCounter: stepCounterReducer,
 });
 
 const persistConfig = {
@@ -25,7 +26,7 @@ const persistConfig = {
   // 반드시 storage를 입력해 주어야 합니다.import { responsesSlice } from './stomp/responseSlice';
 
   storage: AsyncStorage,
-  whitelist: [], // persist store에 저장 할 reducer들
+  whitelist: ["stepCounter"], // stepCounter 데이터를 persist store에 저장
   blacklist: [], //   persist store에 저장하지 않을 reducer들
 };
 
