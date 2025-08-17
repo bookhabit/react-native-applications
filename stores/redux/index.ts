@@ -13,10 +13,9 @@ import {
 } from "redux-persist";
 
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import stepCounterReducer from "./stepCounterSlice";
 
 const rootReducer = combineReducers({
-  stepCounter: stepCounterReducer,
+  // slice name
 });
 
 const persistConfig = {
@@ -26,7 +25,7 @@ const persistConfig = {
   // 반드시 storage를 입력해 주어야 합니다.import { responsesSlice } from './stomp/responseSlice';
 
   storage: AsyncStorage,
-  whitelist: ["stepCounter"], // stepCounter 데이터를 persist store에 저장
+  whitelist: [], // persist store에 저장 할 reducer들
   blacklist: [], //   persist store에 저장하지 않을 reducer들
 };
 

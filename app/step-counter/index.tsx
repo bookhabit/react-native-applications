@@ -21,6 +21,7 @@ export default function StepCounterScreen() {
   const [goalInput, setGoalInput] = useState("10000");
   const [stepHistory, setStepHistory] = useState<StepData[]>([]);
   const [showGoalInput, setShowGoalInput] = useState(false);
+  const [goalAchieved, setGoalAchieved] = useState(false);
 
   const subscription = useRef<any>(null);
   const lastAcceleration = useRef<number>(0);
@@ -69,7 +70,19 @@ export default function StepCounterScreen() {
             acceleration > lastAcceleration.current &&
             currentTime - lastStepTime.current > cooldownTime
           ) {
+            const newSteps = currentSteps + 1;
             setCurrentSteps((prev) => prev + 1);
+
+            // 목표 달성 체크
+            if (newSteps >= dailyGoal && !goalAchieved) {
+              setGoalAchieved(true);
+              // 목표 달성 알림
+              Alert.alert(
+                "🎉 목표 달성!",
+                `축하합니다! 오늘 ${newSteps.toLocaleString()}걸음 목표를 달성했습니다!`
+              );
+            }
+
             lastStepTime.current = currentTime;
           }
 
@@ -100,7 +113,10 @@ export default function StepCounterScreen() {
         {
           text: "초기화",
           style: "destructive",
-          onPress: () => setCurrentSteps(0),
+          onPress: () => {
+            setCurrentSteps(0);
+            setGoalAchieved(false);
+          },
         },
       ]
     );
@@ -112,7 +128,9 @@ export default function StepCounterScreen() {
       Alert.alert("오류", "올바른 목표를 입력해주세요.");
       return;
     }
+
     setDailyGoal(goal);
+    setGoalAchieved(currentSteps >= goal);
     setShowGoalInput(false);
     setGoalInput(goal.toString());
   };
@@ -154,6 +172,13 @@ export default function StepCounterScreen() {
             <TextBox type="body2" style={styles.stepLabel}>
               걸음
             </TextBox>
+            {goalAchieved && (
+              <View style={styles.achievementBadge}>
+                <TextBox type="body2" style={styles.achievementText}>
+                  🎉 목표 달성!
+                </TextBox>
+              </View>
+            )}
           </View>
 
           {/* 진행률 바 */}
@@ -384,6 +409,7 @@ export default function StepCounterScreen() {
               {"\n"}• 가속도 센서를 통해 걸음을 자동으로 감지합니다
               {"\n"}• 일일 목표를 설정하고 건강한 생활을 만들어보세요
               {"\n"}• 앱을 종료해도 걸음 수는 계속 측정됩니다
+              {"\n"}• 목표 달성 시 축하 알림을 받을 수 있습니다
             </TextBox>
           </View>
         </View>
@@ -418,6 +444,17 @@ const styles = StyleSheet.create({
   stepLabel: {
     fontSize: 18,
     marginTop: 5,
+  },
+  achievementBadge: {
+    backgroundColor: Colors.success,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    marginTop: 10,
+  },
+  achievementText: {
+    color: Colors.text,
+    fontWeight: "bold",
   },
   progressContainer: {
     marginBottom: 30,
