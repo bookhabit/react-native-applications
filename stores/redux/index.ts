@@ -13,9 +13,11 @@ import {
 } from "redux-persist";
 
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
+import exampleReducer from "./exampleSlice";
 
 const rootReducer = combineReducers({
   // slice name
+  example: exampleReducer,
 });
 
 const persistConfig = {
