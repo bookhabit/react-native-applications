@@ -1,6 +1,7 @@
+import { AXIOS } from "@/api/config";
 import { API_ENDPOINT } from "@/constants/endpoint";
 import { MovieDetail, MovieResponse, SearchParams } from "@/types/movie";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
 const TMDB_API_KEY = process.env.EXPO_PUBLIC_MOVIE_API_KEY;
 const BASE_URL = API_ENDPOINT.TMDB.BASE_URL;
@@ -14,15 +15,15 @@ const fetchMovies = async (
   endpoint: string,
   page: number = 1
 ): Promise<MovieResponse> => {
-  const response = await fetch(
+  const response = await AXIOS.get(
     `${BASE_URL}${endpoint}?api_key=${TMDB_API_KEY}&language=ko-KR&page=${page}`
   );
 
-  if (!response.ok) {
+  if (response.status !== 200) {
     throw new Error("영화 데이터를 불러오는데 실패했습니다.");
   }
 
-  return response.json();
+  return response.data;
 };
 
 const searchMovies = async (params: SearchParams): Promise<MovieResponse> => {
@@ -38,43 +39,56 @@ const searchMovies = async (params: SearchParams): Promise<MovieResponse> => {
     searchParams.append("year", params.year.toString());
   }
 
-  const response = await fetch(
+  const response = await AXIOS.get(
     `${BASE_URL}/search/movie?${searchParams.toString()}`
   );
 
-  if (!response.ok) {
+  if (response.status !== 200) {
     throw new Error("영화 검색에 실패했습니다.");
   }
 
-  return response.json();
+  return response.data;
 };
 
 const fetchMovieDetail = async (movieId: number): Promise<MovieDetail> => {
-  const response = await fetch(
+  const response = await AXIOS.get(
     `${BASE_URL}/movie/${movieId}?api_key=${TMDB_API_KEY}&language=ko-KR&append_to_response=credits,videos,images`
   );
 
-  if (!response.ok) {
+  if (response.status !== 200) {
     throw new Error("영화 상세 정보를 불러오는데 실패했습니다.");
   }
 
-  return response.json();
+  return response.data;
 };
 
 // React Query 훅들
-export const useMovies = (endpoint: string, page: number = 1) => {
-  return useQuery({
-    queryKey: ["movies", endpoint, page],
-    queryFn: () => fetchMovies(endpoint, page),
+export const useMovies = (endpoint: string) => {
+  return useInfiniteQuery({
+    queryKey: ["movies", endpoint],
+    queryFn: ({ pageParam = 1 }) => fetchMovies(endpoint, pageParam),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      return lastPage.page < lastPage.total_pages
+        ? lastPage.page + 1
+        : undefined;
+    },
     staleTime: 5 * 60 * 1000, // 5분
     gcTime: 10 * 60 * 1000, // 10분
   });
 };
 
 export const useSearchMovies = (params: SearchParams) => {
-  return useQuery({
-    queryKey: ["search", params],
-    queryFn: () => searchMovies(params),
+  return useInfiniteQuery({
+    queryKey: ["search", params.query],
+    queryFn: ({ pageParam = 1 }) =>
+      searchMovies({ ...params, page: pageParam }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      return lastPage.page < lastPage.total_pages
+        ? lastPage.page + 1
+        : undefined;
+    },
     enabled: !!params.query && params.query.length > 0,
     staleTime: 2 * 60 * 1000, // 2분
     gcTime: 5 * 60 * 1000, // 5분

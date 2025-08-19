@@ -39,7 +39,6 @@ export default function MoviesScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
 
   // 디바운스된 검색어
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
@@ -56,16 +55,21 @@ export default function MoviesScreen() {
     isLoading: moviesLoading,
     error: moviesError,
     refetch: refetchMovies,
-  } = useMovies(currentCategory?.endpoint || "/movie/now_playing", currentPage);
+    fetchNextPage: fetchNextMovies,
+    hasNextPage: hasNextMovies,
+    isFetchingNextPage: isFetchingNextMovies,
+  } = useMovies(currentCategory?.endpoint || "/movie/now_playing");
 
   // 검색 API 호출
   const {
     data: searchData,
     isLoading: searchLoading,
     error: searchError,
+    fetchNextPage: fetchNextSearch,
+    hasNextPage: hasNextSearch,
+    isFetchingNextPage: isFetchingNextSearch,
   } = useSearchMovies({
     query: debouncedSearchQuery,
-    page: currentPage,
   });
 
   // 영화 상세 정보
@@ -77,19 +81,27 @@ export default function MoviesScreen() {
   const isSearchMode = debouncedSearchQuery.length > 0;
   const isFavoritesMode = selectedCategory === "favorites";
 
+  // useInfiniteQuery 데이터를 평면화
+  const flattenMoviesData =
+    moviesData?.pages.flatMap((page) => page.results) || [];
+  const flattenSearchData =
+    searchData?.pages.flatMap((page) => page.results) || [];
+
   const currentData = isSearchMode
-    ? searchData?.results || []
+    ? flattenSearchData
     : isFavoritesMode
     ? favorites
-    : moviesData?.results || [];
+    : flattenMoviesData;
+
+  console.log("영화데이터", flattenMoviesData.length);
 
   const isLoading = moviesLoading || searchLoading;
+  const isFetchingNext = isFetchingNextMovies || isFetchingNextSearch;
   const error = moviesError || searchError;
 
   // 카테고리 변경 핸들러
   const handleCategoryChange = useCallback((categoryId: string) => {
     setSelectedCategory(categoryId);
-    setCurrentPage(1);
     setSearchQuery("");
   }, []);
 
@@ -133,20 +145,25 @@ export default function MoviesScreen() {
   const handleLoadMore = useCallback(() => {
     if (isLoading || isFavoritesMode) return;
 
-    const totalPages = isSearchMode
-      ? searchData?.total_pages || 1
-      : moviesData?.total_pages || 1;
-
-    if (currentPage < totalPages) {
-      setCurrentPage((prev) => prev + 1);
+    if (isSearchMode) {
+      if (hasNextSearch && !isFetchingNextSearch) {
+        fetchNextSearch();
+      }
+    } else {
+      if (hasNextMovies && !isFetchingNextMovies) {
+        fetchNextMovies();
+      }
     }
   }, [
     isLoading,
     isFavoritesMode,
     isSearchMode,
-    currentPage,
-    searchData,
-    moviesData,
+    hasNextSearch,
+    isFetchingNextSearch,
+    fetchNextSearch,
+    hasNextMovies,
+    isFetchingNextMovies,
+    fetchNextMovies,
   ]);
 
   // 에러 처리
@@ -208,7 +225,7 @@ export default function MoviesScreen() {
 
   // 로딩 푸터
   const renderFooter = useCallback(() => {
-    if (!isLoading || isFavoritesMode) return null;
+    if (!isFetchingNext || isFavoritesMode) return null;
 
     return (
       <View style={styles.footerLoader}>
@@ -218,7 +235,7 @@ export default function MoviesScreen() {
         </TextBox>
       </View>
     );
-  }, [isLoading, isFavoritesMode]);
+  }, [isFetchingNext, isFavoritesMode]);
 
   return (
     <ThemedView style={styles.container}>
@@ -267,14 +284,14 @@ export default function MoviesScreen() {
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
-            refreshing={isLoading && currentPage === 1}
+            refreshing={isLoading}
             onRefresh={handleRefresh}
             colors={[Colors.primary]}
             tintColor={Colors.primary}
           />
         }
         onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.1}
+        onEndReachedThreshold={0.5}
         ListEmptyComponent={renderEmptyState}
         ListFooterComponent={renderFooter}
         removeClippedSubviews={true}
