@@ -262,9 +262,13 @@ export default function MoviesScreen() {
             style={styles.searchInput}
             autoCapitalize="none"
             autoCorrect={false}
+            testID="search-input"
           />
           {searchQuery.length > 0 && (
-            <TouchableOpacity onPress={() => setSearchQuery("")}>
+            <TouchableOpacity
+              onPress={() => setSearchQuery("")}
+              testID="clear-search"
+            >
               <Ionicons
                 name="close-circle"
                 size={20}
@@ -312,6 +316,7 @@ export default function MoviesScreen() {
         updateCellsBatchingPeriod={100}
         disableVirtualization={false}
         getItemLayout={undefined}
+        testID="movies-flatlist"
       />
 
       {/* 영화 상세 모달 */}

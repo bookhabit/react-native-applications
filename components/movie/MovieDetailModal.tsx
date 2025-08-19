@@ -40,19 +40,26 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
   const posterUrl = getOptimizedImageUrl(movie.poster_path, "poster");
 
   const formatRuntime = (minutes: number) => {
+    if (minutes === 0) return "";
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     return `${hours}시간 ${mins}분`;
   };
 
-  const formatBudget = (budget: number) => {
-    if (budget === 0) return "정보 없음";
-    return `$${(budget / 1000000).toFixed(1)}M`;
+  const formatCurrency = (amount: number) => {
+    if (amount === 0) return "정보 없음";
+    return `$${(amount / 1000000).toFixed(1)}M`;
   };
 
-  const formatRevenue = (revenue: number) => {
-    if (revenue === 0) return "정보 없음";
-    return `$${(revenue / 1000000).toFixed(1)}M`;
+  const formatStatus = (status: string) => {
+    const statusMap: Record<string, string> = {
+      Released: "개봉됨",
+      "Post Production": "후반 제작",
+      "In Production": "제작 중",
+      "Pre Production": "전반 제작",
+      Canceled: "취소됨",
+    };
+    return statusMap[status] || status;
   };
 
   return (
@@ -63,19 +70,27 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
       onRequestClose={onClose}
     >
       <View style={styles.container}>
-        {/* 헤더 */}
+        {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={onClose}
+            activeOpacity={0.7}
+            testID="close-button"
+          >
             <Ionicons name="close" size={24} color={Colors.white} />
           </TouchableOpacity>
+
           <TouchableOpacity
-            onPress={onToggleFavorite}
             style={styles.favoriteButton}
+            onPress={() => onToggleFavorite()}
+            activeOpacity={0.7}
+            testID="favorite-button"
           >
             <Ionicons
               name={isFavorite ? "heart" : "heart-outline"}
               size={24}
-              color={isFavorite ? Colors.fillHeart : Colors.heart}
+              color={isFavorite ? Colors.error : Colors.white}
             />
           </TouchableOpacity>
         </View>
@@ -83,8 +98,9 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
         <ScrollView
           style={styles.scrollView}
           showsVerticalScrollIndicator={false}
+          testID="modal-scroll"
         >
-          {/* 배경 이미지 */}
+          {/* Background Image */}
           {backdropUrl && (
             <View style={styles.backdropContainer}>
               <Image
@@ -95,12 +111,13 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
                 cachePolicy="memory-disk"
                 placeholder={blurhash}
                 placeholderContentFit="cover"
+                testID="backdrop-image"
               />
               <View style={styles.backdropOverlay} />
             </View>
           )}
 
-          {/* 포스터와 기본 정보 */}
+          {/* Poster and Basic Info */}
           <View style={styles.posterSection}>
             {posterUrl ? (
               <Image
@@ -111,9 +128,13 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
                 cachePolicy="memory-disk"
                 placeholder={blurhash}
                 placeholderContentFit="cover"
+                testID="poster-image"
               />
             ) : (
-              <View style={styles.posterPlaceholder}>
+              <View
+                style={styles.posterPlaceholder}
+                testID="poster-placeholder"
+              >
                 <Ionicons
                   name="film-outline"
                   size={60}
@@ -149,11 +170,7 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
                       size={16}
                       color={Colors.white}
                     />
-                    <TextBox
-                      type="body3"
-                      style={styles.metaText}
-                      lightColor={Colors.white}
-                    >
+                    <TextBox type="body3" style={styles.metaText}>
                       {new Date(movie.release_date).getFullYear()}
                     </TextBox>
                   </View>
@@ -166,11 +183,7 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
                       size={16}
                       color={Colors.white}
                     />
-                    <TextBox
-                      type="body3"
-                      style={styles.metaText}
-                      lightColor={Colors.white}
-                    >
+                    <TextBox type="body3" style={styles.metaText}>
                       {formatRuntime(movie.runtime)}
                     </TextBox>
                   </View>
@@ -179,11 +192,7 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
                 {movie.vote_average > 0 && (
                   <View style={styles.metaItem}>
                     <Ionicons name="star" size={16} color={Colors.warning} />
-                    <TextBox
-                      type="body3"
-                      style={styles.metaText}
-                      lightColor={Colors.white}
-                    >
+                    <TextBox type="body3" style={styles.metaText}>
                       {movie.vote_average.toFixed(1)}
                     </TextBox>
                   </View>
@@ -191,14 +200,10 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
               </View>
 
               {movie.genres && movie.genres.length > 0 && (
-                <View style={styles.genresContainer}>
+                <View style={styles.genres}>
                   {movie.genres.map((genre) => (
                     <View key={genre.id} style={styles.genreTag}>
-                      <TextBox
-                        type="body3"
-                        style={styles.genreText}
-                        lightColor={Colors.white}
-                      >
+                      <TextBox type="caption1" style={styles.genreText}>
                         {genre.name}
                       </TextBox>
                     </View>
@@ -208,10 +213,10 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
             </View>
           </View>
 
-          {/* 줄거리 */}
+          {/* Overview */}
           {movie.overview && (
             <View style={styles.section}>
-              <TextBox type="title2" style={styles.sectionTitle}>
+              <TextBox type="title3" style={styles.sectionTitle}>
                 줄거리
               </TextBox>
               <TextBox type="body2" style={styles.overview}>
@@ -220,71 +225,70 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
             </View>
           )}
 
-          {/* 제작 정보 */}
+          {/* Production Info */}
           <View style={styles.section}>
-            <TextBox type="title2" style={styles.sectionTitle}>
+            <TextBox type="title3" style={styles.sectionTitle}>
               제작 정보
             </TextBox>
-
-            <View style={styles.infoGrid}>
-              <View style={styles.infoItem}>
-                <TextBox type="body3" style={styles.infoLabel}>
+            <View style={styles.productionInfo}>
+              <View style={styles.productionItem}>
+                <TextBox type="body3" style={styles.productionLabel}>
                   예산
                 </TextBox>
-                <TextBox type="body2" style={styles.infoValue}>
-                  {formatBudget(movie.budget)}
+                <TextBox type="body2" style={styles.productionValue}>
+                  {formatCurrency(movie.budget)}
                 </TextBox>
               </View>
 
-              <View style={styles.infoItem}>
-                <TextBox type="body3" style={styles.infoLabel}>
+              <View style={styles.productionItem}>
+                <TextBox type="body3" style={styles.productionLabel}>
                   수익
                 </TextBox>
-                <TextBox type="body2" style={styles.infoValue}>
-                  {formatRevenue(movie.revenue)}
+                <TextBox type="body2" style={styles.productionValue}>
+                  {formatCurrency(movie.revenue)}
                 </TextBox>
               </View>
 
-              <View style={styles.infoItem}>
-                <TextBox type="body3" style={styles.infoLabel}>
+              <View style={styles.productionItem}>
+                <TextBox type="body3" style={styles.productionLabel}>
                   상태
                 </TextBox>
-                <TextBox type="body2" style={styles.infoValue}>
-                  {movie.status}
+                <TextBox type="body2" style={styles.productionValue}>
+                  {formatStatus(movie.status)}
                 </TextBox>
               </View>
 
-              <View style={styles.infoItem}>
-                <TextBox type="body3" style={styles.infoLabel}>
+              <View style={styles.productionItem}>
+                <TextBox type="body3" style={styles.productionLabel}>
                   언어
                 </TextBox>
-                <TextBox type="body2" style={styles.infoValue}>
+                <TextBox type="body2" style={styles.productionValue}>
                   {movie.original_language.toUpperCase()}
                 </TextBox>
               </View>
             </View>
           </View>
 
-          {/* 제작사 */}
+          {/* Production Companies */}
           {movie.production_companies &&
             movie.production_companies.length > 0 && (
               <View style={styles.section}>
-                <TextBox type="title2" style={styles.sectionTitle}>
+                <TextBox type="title3" style={styles.sectionTitle}>
                   제작사
                 </TextBox>
-                {movie.production_companies.map((company) => (
-                  <TextBox
-                    key={company.id}
-                    type="body2"
-                    style={styles.companyName}
-                  >
-                    • {company.name}
-                  </TextBox>
-                ))}
+                <View style={styles.companies}>
+                  {movie.production_companies.map((company) => (
+                    <TextBox
+                      key={company.id}
+                      type="body2"
+                      style={styles.company}
+                    >
+                      • {company.name}
+                    </TextBox>
+                  ))}
+                </View>
               </View>
             )}
-
-          <View style={styles.bottomPadding} />
         </ScrollView>
       </View>
     </Modal>
@@ -302,8 +306,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     paddingTop: 40,
-    paddingBottom: 10,
-    zIndex: 10,
+    paddingBottom: 20,
+    zIndex: 1,
   },
   closeButton: {
     width: 40,
@@ -325,10 +329,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   backdropContainer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
+    position: "relative",
     height: 300,
   },
   backdrop: {
@@ -341,12 +342,13 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
   },
   posterSection: {
     flexDirection: "row",
     padding: 20,
-    paddingTop: 120,
+    marginTop: -60,
+    zIndex: 2,
   },
   poster: {
     width: 120,
@@ -365,14 +367,16 @@ const styles = StyleSheet.create({
   },
   basicInfo: {
     flex: 1,
+    justifyContent: "flex-end",
   },
   title: {
     marginBottom: 8,
-    lineHeight: 28,
+    color: Colors.white,
   },
   tagline: {
-    fontStyle: "italic",
     marginBottom: 16,
+    color: Colors.textSecondary,
+    fontStyle: "italic",
   },
   metaInfo: {
     flexDirection: "row",
@@ -385,53 +389,58 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 4,
   },
-  metaText: {},
-  genresContainer: {
+  metaText: {
+    color: Colors.textSecondary,
+  },
+  genres: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 8,
   },
   genreTag: {
-    backgroundColor: Colors.primary,
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
     paddingHorizontal: 12,
-    paddingVertical: 4,
+    paddingVertical: 6,
     borderRadius: 16,
   },
   genreText: {
+    color: Colors.white,
     fontSize: 12,
   },
   section: {
     padding: 20,
-    paddingTop: 0,
+    borderTopWidth: 1,
+    borderTopColor: Colors.border,
   },
   sectionTitle: {
-    marginBottom: 12,
+    marginBottom: 16,
     fontWeight: "600",
   },
   overview: {
-    lineHeight: 22,
+    lineHeight: 24,
     color: Colors.textSecondary,
   },
-  infoGrid: {
+  productionInfo: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 20,
   },
-  infoItem: {
+  productionItem: {
     minWidth: "45%",
   },
-  infoLabel: {
+  productionLabel: {
     color: Colors.textSecondary,
     marginBottom: 4,
   },
-  infoValue: {
+  productionValue: {
     fontWeight: "500",
   },
-  companyName: {
-    marginBottom: 4,
-    color: Colors.textSecondary,
+  companies: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
   },
-  bottomPadding: {
-    height: 40,
+  company: {
+    color: Colors.textSecondary,
   },
 });

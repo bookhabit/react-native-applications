@@ -13,11 +13,12 @@ interface CategorySelectorProps {
 export const CategorySelector: React.FC<CategorySelectorProps> = memo(
   ({ categories, selectedCategory, onSelectCategory }) => {
     return (
-      <View style={styles.container}>
+      <View style={styles.container} testID="category-selector">
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
+          testID="category-scroll"
         >
           {categories.map((category) => (
             <TouchableOpacity
@@ -28,9 +29,10 @@ export const CategorySelector: React.FC<CategorySelectorProps> = memo(
               ]}
               onPress={() => onSelectCategory(category.id)}
               activeOpacity={0.7}
+              testID={`category-${category.id}`}
             >
               <TextBox
-                type="body2"
+                type="body3"
                 style={[
                   styles.categoryText,
                   selectedCategory === category.id &&

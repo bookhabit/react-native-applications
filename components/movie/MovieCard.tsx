@@ -4,8 +4,14 @@ import { getOptimizedImageUrl } from "@/hooks/api/movieApi";
 import { Movie } from "@/types/movie";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import React, { memo } from "react";
-import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
+import React, { memo, useCallback } from "react";
+import {
+  Dimensions,
+  GestureResponderEvent,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 interface MovieCardProps {
   movie: Movie;
@@ -31,10 +37,21 @@ export const MovieCard: React.FC<MovieCardProps> = memo(
   }) => {
     const posterUrl = getOptimizedImageUrl(movie.poster_path, "poster");
 
-    const handleFavoritePress = (e: any) => {
-      e.stopPropagation();
-      onToggleFavorite?.(movie);
-    };
+    const handleToggleFavorite = useCallback(
+      (e: GestureResponderEvent) => {
+        if (e && e.stopPropagation) {
+          e.stopPropagation();
+        }
+        if (onToggleFavorite) {
+          onToggleFavorite(movie);
+        }
+      },
+      [onToggleFavorite, movie]
+    );
+
+    const handlePress = useCallback(() => {
+      onPress(movie);
+    }, [onPress, movie]);
 
     const formatRating = (rating: number) => {
       return rating.toFixed(1);
@@ -46,9 +63,10 @@ export const MovieCard: React.FC<MovieCardProps> = memo(
 
     return (
       <TouchableOpacity
-        style={styles.container}
-        onPress={() => onPress(movie)}
-        activeOpacity={0.8}
+        style={styles.card}
+        onPress={handlePress}
+        activeOpacity={0.7}
+        testID="movie-card"
       >
         <View style={styles.imageContainer}>
           {posterUrl ? (
@@ -60,9 +78,10 @@ export const MovieCard: React.FC<MovieCardProps> = memo(
               cachePolicy="memory-disk"
               placeholder={blurhash}
               placeholderContentFit="cover"
+              testID="movie-poster"
             />
           ) : (
-            <View style={styles.placeholder}>
+            <View style={styles.placeholder} testID="movie-poster-placeholder">
               <Ionicons
                 name="film-outline"
                 size={40}
@@ -74,39 +93,35 @@ export const MovieCard: React.FC<MovieCardProps> = memo(
           {showFavoriteButton && onToggleFavorite && (
             <TouchableOpacity
               style={styles.favoriteButton}
-              onPress={handleFavoritePress}
+              onPress={handleToggleFavorite}
+              activeOpacity={0.8}
+              testID="favorite-button"
             >
               <Ionicons
                 name={isFavorite ? "heart" : "heart-outline"}
                 size={20}
-                color={isFavorite ? Colors.fillHeart : Colors.heart}
+                color={isFavorite ? Colors.error : Colors.textSecondary}
               />
             </TouchableOpacity>
           )}
 
           {movie.vote_average > 0 && (
-            <View style={styles.ratingContainer}>
+            <View style={styles.rating} testID="movie-rating">
               <Ionicons name="star" size={12} color={Colors.warning} />
-              <TextBox
-                type="body3"
-                style={styles.rating}
-                lightColor={Colors.white}
-                darkColor={Colors.white}
-              >
-                {formatRating(movie.vote_average)}
+              <TextBox type="caption1" style={styles.ratingText}>
+                {movie.vote_average.toFixed(1)}
               </TextBox>
             </View>
           )}
         </View>
 
-        <View style={styles.infoContainer}>
+        <View style={styles.info}>
           <TextBox type="body2" style={styles.title} numberOfLines={2}>
             {movie.title}
           </TextBox>
-
           {movie.release_date && (
-            <TextBox type="body3" style={styles.year}>
-              {formatYear(movie.release_date)}
+            <TextBox type="caption1" style={styles.year}>
+              {new Date(movie.release_date).getFullYear()}
             </TextBox>
           )}
         </View>
@@ -116,7 +131,7 @@ export const MovieCard: React.FC<MovieCardProps> = memo(
 );
 
 const styles = StyleSheet.create({
-  container: {
+  card: {
     width: CARD_WIDTH,
     marginBottom: 20,
   },
@@ -149,7 +164,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  ratingContainer: {
+  rating: {
     position: "absolute",
     bottom: 8,
     left: 8,
@@ -160,11 +175,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  rating: {
+  ratingText: {
     marginLeft: 2,
     fontSize: 10,
   },
-  infoContainer: {
+  info: {
     paddingHorizontal: 4,
   },
   title: {
