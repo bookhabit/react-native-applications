@@ -4,6 +4,7 @@
 
 export const Colors = {
   // 기본 색상
+  white: "#FFF",
   primary: "#0a7ea4",
   secondary: "#687076",
   success: "#28a745",
@@ -22,6 +23,10 @@ export const Colors = {
   icon: "#687076",
   tabIconDefault: "#687076",
   tabIconSelected: "#0a7ea4",
+
+  // 하트 색상
+  heart: "#FFF",
+  fillHeart: "#dc3545",
 
   // 라이트/다크 모드 호환성을 위한 기존 구조 유지
   light: {

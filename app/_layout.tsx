@@ -3,6 +3,7 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -12,6 +13,7 @@ import { PersistGate } from "redux-persist/integration/react";
 
 import { fonts } from "@/constants/fonts";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { queryClient } from "@/stores/react-query/queryClient";
 import { persistor, store } from "@/stores/redux";
 
 export default function RootLayout() {
@@ -34,102 +36,104 @@ export default function RootLayout() {
   }
 
   return (
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <ThemeProvider
-          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-        >
-          <Stack>
-            <Stack.Screen
-              name="index"
-              options={{
-                title: "앱 갤러리",
-                headerShown: true,
-              }}
-            />
-            <Stack.Screen
-              name="todo"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="weather"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="notes"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="chat"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="movies"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="calendar"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="gallery"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="shop"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="quiz"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="step-counter"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="form"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="action-sheet"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="modal"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          <StatusBar style="auto" />
-        </ThemeProvider>
-      </PersistGate>
-    </Provider>
+    <QueryClientProvider client={queryClient}>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <ThemeProvider
+            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+          >
+            <Stack>
+              <Stack.Screen
+                name="index"
+                options={{
+                  title: "앱 갤러리",
+                  headerShown: true,
+                }}
+              />
+              <Stack.Screen
+                name="todo"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="weather"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="notes"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="chat"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="movies"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="calendar"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="gallery"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="shop"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="quiz"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="step-counter"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="form"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="action-sheet"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="modal"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+            <StatusBar style="auto" />
+          </ThemeProvider>
+        </PersistGate>
+      </Provider>
+    </QueryClientProvider>
   );
 }
