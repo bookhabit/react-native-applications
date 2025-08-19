@@ -14,7 +14,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { useFavorites } from "@/hooks/useFavorites";
 import { Category as CategoryType, Movie } from "@/types/movie";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -81,17 +81,28 @@ export default function MoviesScreen() {
   const isSearchMode = debouncedSearchQuery.length > 0;
   const isFavoritesMode = selectedCategory === "favorites";
 
-  // useInfiniteQuery 데이터를 평면화
-  const flattenMoviesData =
-    moviesData?.pages.flatMap((page) => page.results) || [];
-  const flattenSearchData =
-    searchData?.pages.flatMap((page) => page.results) || [];
+  // useInfiniteQuery 데이터를 평면화 (useMemo로 최적화)
+  const flattenMoviesData = useMemo(
+    () => moviesData?.pages.flatMap((page) => page.results) || [],
+    [moviesData?.pages]
+  );
 
-  const currentData = isSearchMode
-    ? flattenSearchData
-    : isFavoritesMode
-    ? favorites
-    : flattenMoviesData;
+  const flattenSearchData = useMemo(
+    () => searchData?.pages.flatMap((page) => page.results) || [],
+    [searchData?.pages]
+  );
+
+  const currentData = useMemo(() => {
+    if (isSearchMode) return flattenSearchData;
+    if (isFavoritesMode) return favorites;
+    return flattenMoviesData;
+  }, [
+    isSearchMode,
+    isFavoritesMode,
+    flattenSearchData,
+    favorites,
+    flattenMoviesData,
+  ]);
 
   console.log("영화데이터", flattenMoviesData.length);
 
@@ -195,6 +206,9 @@ export default function MoviesScreen() {
     [handleMoviePress, isFavorite, handleToggleFavorite, isFavoritesMode]
   );
 
+  // keyExtractor 최적화
+  const keyExtractor = useCallback((item: Movie) => item.id.toString(), []);
+
   // 빈 상태 렌더링
   const renderEmptyState = useCallback(() => {
     if (isLoading) return null;
@@ -277,7 +291,7 @@ export default function MoviesScreen() {
       <FlatList
         data={currentData}
         renderItem={renderMovieItem}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={keyExtractor}
         numColumns={2}
         columnWrapperStyle={styles.row}
         contentContainerStyle={styles.listContainer}
@@ -291,13 +305,16 @@ export default function MoviesScreen() {
           />
         }
         onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.5}
+        onEndReachedThreshold={0.3}
         ListEmptyComponent={renderEmptyState}
         ListFooterComponent={renderFooter}
         removeClippedSubviews={true}
-        maxToRenderPerBatch={10}
-        windowSize={10}
+        maxToRenderPerBatch={5}
+        windowSize={5}
         initialNumToRender={10}
+        updateCellsBatchingPeriod={100}
+        disableVirtualization={false}
+        getItemLayout={undefined}
       />
 
       {/* 영화 상세 모달 */}

@@ -1,12 +1,12 @@
 import { TextBox } from "@/components/atom/TextBox";
 import { Colors } from "@/constants/Colors";
-import { getBackdropUrl, getPosterUrl } from "@/hooks/api/movieApi";
+import { getOptimizedImageUrl } from "@/hooks/api/movieApi";
 import { MovieDetail } from "@/types/movie";
 import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import React from "react";
 import {
   Dimensions,
-  Image,
   Modal,
   ScrollView,
   StyleSheet,
@@ -24,6 +24,9 @@ interface MovieDetailModalProps {
 
 const { width, height } = Dimensions.get("window");
 
+// 간단한 blurhash (회색 그라데이션)
+const blurhash = "L5H2EC=PM+yV0g-mq.wG9c010J}I";
+
 export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
   visible,
   movie,
@@ -33,8 +36,8 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
 }) => {
   if (!movie) return null;
 
-  const backdropUrl = getBackdropUrl(movie.backdrop_path);
-  const posterUrl = getPosterUrl(movie.poster_path);
+  const backdropUrl = getOptimizedImageUrl(movie.backdrop_path, "backdrop");
+  const posterUrl = getOptimizedImageUrl(movie.poster_path, "poster");
 
   const formatRuntime = (minutes: number) => {
     const hours = Math.floor(minutes / 60);
@@ -84,7 +87,15 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
           {/* 배경 이미지 */}
           {backdropUrl && (
             <View style={styles.backdropContainer}>
-              <Image source={{ uri: backdropUrl }} style={styles.backdrop} />
+              <Image
+                source={{ uri: backdropUrl }}
+                style={styles.backdrop}
+                contentFit="cover"
+                transition={300}
+                cachePolicy="memory-disk"
+                placeholder={blurhash}
+                placeholderContentFit="cover"
+              />
               <View style={styles.backdropOverlay} />
             </View>
           )}
@@ -92,7 +103,15 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
           {/* 포스터와 기본 정보 */}
           <View style={styles.posterSection}>
             {posterUrl ? (
-              <Image source={{ uri: posterUrl }} style={styles.poster} />
+              <Image
+                source={{ uri: posterUrl }}
+                style={styles.poster}
+                contentFit="cover"
+                transition={200}
+                cachePolicy="memory-disk"
+                placeholder={blurhash}
+                placeholderContentFit="cover"
+              />
             ) : (
               <View style={styles.posterPlaceholder}>
                 <Ionicons
@@ -104,7 +123,11 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
             )}
 
             <View style={styles.basicInfo}>
-              <TextBox type="title1" style={styles.title}>
+              <TextBox
+                type="title1"
+                style={styles.title}
+                lightColor={Colors.white}
+              >
                 {movie.title}
               </TextBox>
 

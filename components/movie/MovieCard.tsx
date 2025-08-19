@@ -1,16 +1,11 @@
 import { TextBox } from "@/components/atom/TextBox";
 import { Colors } from "@/constants/Colors";
-import { getPosterUrl } from "@/hooks/api/movieApi";
+import { getOptimizedImageUrl } from "@/hooks/api/movieApi";
 import { Movie } from "@/types/movie";
 import { Ionicons } from "@expo/vector-icons";
-import React from "react";
-import {
-  Dimensions,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image } from "expo-image";
+import React, { memo } from "react";
+import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
 
 interface MovieCardProps {
   movie: Movie;
@@ -23,84 +18,97 @@ interface MovieCardProps {
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = (width - 60) / 2; // 2열 그리드, 좌우 패딩 20씩, 카드 간격 20
 
-export const MovieCard: React.FC<MovieCardProps> = ({
-  movie,
-  onPress,
-  isFavorite = false,
-  onToggleFavorite,
-  showFavoriteButton = true,
-}) => {
-  const posterUrl = getPosterUrl(movie.poster_path);
+// 간단한 blurhash (회색 그라데이션)
+const blurhash = "L5H2EC=PM+yV0g-mq.wG9c010J}I";
 
-  const handleFavoritePress = (e: any) => {
-    e.stopPropagation();
-    onToggleFavorite?.(movie);
-  };
+export const MovieCard: React.FC<MovieCardProps> = memo(
+  ({
+    movie,
+    onPress,
+    isFavorite = false,
+    onToggleFavorite,
+    showFavoriteButton = true,
+  }) => {
+    const posterUrl = getOptimizedImageUrl(movie.poster_path, "poster");
 
-  const formatRating = (rating: number) => {
-    return rating.toFixed(1);
-  };
+    const handleFavoritePress = (e: any) => {
+      e.stopPropagation();
+      onToggleFavorite?.(movie);
+    };
 
-  const formatYear = (dateString: string) => {
-    return new Date(dateString).getFullYear();
-  };
+    const formatRating = (rating: number) => {
+      return rating.toFixed(1);
+    };
 
-  return (
-    <TouchableOpacity
-      style={styles.container}
-      onPress={() => onPress(movie)}
-      activeOpacity={0.8}
-    >
-      <View style={styles.imageContainer}>
-        {posterUrl ? (
-          <Image source={{ uri: posterUrl }} style={styles.poster} />
-        ) : (
-          <View style={styles.placeholder}>
-            <Ionicons
-              name="film-outline"
-              size={40}
-              color={Colors.textSecondary}
+    const formatYear = (dateString: string) => {
+      return new Date(dateString).getFullYear();
+    };
+
+    return (
+      <TouchableOpacity
+        style={styles.container}
+        onPress={() => onPress(movie)}
+        activeOpacity={0.8}
+      >
+        <View style={styles.imageContainer}>
+          {posterUrl ? (
+            <Image
+              source={{ uri: posterUrl }}
+              style={styles.poster}
+              contentFit="cover"
+              transition={200}
+              cachePolicy="memory-disk"
+              placeholder={blurhash}
+              placeholderContentFit="cover"
             />
-          </View>
-        )}
+          ) : (
+            <View style={styles.placeholder}>
+              <Ionicons
+                name="film-outline"
+                size={40}
+                color={Colors.textSecondary}
+              />
+            </View>
+          )}
 
-        {showFavoriteButton && onToggleFavorite && (
-          <TouchableOpacity
-            style={styles.favoriteButton}
-            onPress={handleFavoritePress}
-          >
-            <Ionicons
-              name={isFavorite ? "heart" : "heart-outline"}
-              size={20}
-              color={isFavorite ? Colors.fillHeart : Colors.heart}
-            />
-          </TouchableOpacity>
-        )}
+          {showFavoriteButton && onToggleFavorite && (
+            <TouchableOpacity
+              style={styles.favoriteButton}
+              onPress={handleFavoritePress}
+            >
+              <Ionicons
+                name={isFavorite ? "heart" : "heart-outline"}
+                size={20}
+                color={isFavorite ? Colors.fillHeart : Colors.heart}
+              />
+            </TouchableOpacity>
+          )}
 
-        {movie.vote_average > 0 && (
-          <View style={styles.ratingContainer}>
-            <Ionicons name="star" size={12} color={Colors.warning} />
-            <TextBox type="body3" style={styles.rating}>
-              {formatRating(movie.vote_average)}
-            </TextBox>
-          </View>
-        )}
-      </View>
+          {movie.vote_average > 0 && (
+            <View style={styles.ratingContainer}>
+              <Ionicons name="star" size={12} color={Colors.warning} />
+              <TextBox type="body3" style={styles.rating}>
+                {formatRating(movie.vote_average)}
+              </TextBox>
+            </View>
+          )}
+        </View>
 
-      <View style={styles.infoContainer}>
-        <TextBox type="body2" style={styles.title} numberOfLines={2}>
-          {movie.title}
-        </TextBox>
-
-        {movie.release_date && (
-          <TextBox type="body3" style={styles.year}>
-            {formatYear(movie.release_date)}
+        <View style={styles.infoContainer}>
+          <TextBox type="body2" style={styles.title} numberOfLines={2}>
+            {movie.title}
           </TextBox>
-        )}
-      </View>
-    </TouchableOpacity>
-  );
-};
+
+          {movie.release_date && (
+            <TextBox type="body3" style={styles.year}>
+              {formatYear(movie.release_date)}
+            </TextBox>
+          )}
+        </View>
+      </TouchableOpacity>
+    );
+  }
+);
 
 const styles = StyleSheet.create({
   container: {

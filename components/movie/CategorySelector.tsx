@@ -1,13 +1,8 @@
-import React from "react";
-import {
-  ScrollView,
-  TouchableOpacity,
-  StyleSheet,
-  View,
-} from "react-native";
 import { TextBox } from "@/components/atom/TextBox";
 import { Colors } from "@/constants/Colors";
 import { Category } from "@/types/movie";
+import React, { memo } from "react";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 
 interface CategorySelectorProps {
   categories: Category[];
@@ -15,43 +10,42 @@ interface CategorySelectorProps {
   onSelectCategory: (categoryId: string) => void;
 }
 
-export const CategorySelector: React.FC<CategorySelectorProps> = ({
-  categories,
-  selectedCategory,
-  onSelectCategory,
-}) => {
-  return (
-    <View style={styles.container}>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        {categories.map((category) => (
-          <TouchableOpacity
-            key={category.id}
-            style={[
-              styles.categoryButton,
-              selectedCategory === category.id && styles.selectedCategory,
-            ]}
-            onPress={() => onSelectCategory(category.id)}
-            activeOpacity={0.7}
-          >
-            <TextBox
-              type="body2"
+export const CategorySelector: React.FC<CategorySelectorProps> = memo(
+  ({ categories, selectedCategory, onSelectCategory }) => {
+    return (
+      <View style={styles.container}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {categories.map((category) => (
+            <TouchableOpacity
+              key={category.id}
               style={[
-                styles.categoryText,
-                selectedCategory === category.id && styles.selectedCategoryText,
+                styles.categoryButton,
+                selectedCategory === category.id && styles.selectedCategory,
               ]}
+              onPress={() => onSelectCategory(category.id)}
+              activeOpacity={0.7}
             >
-              {category.name}
-            </TextBox>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-    </View>
-  );
-};
+              <TextBox
+                type="body2"
+                style={[
+                  styles.categoryText,
+                  selectedCategory === category.id &&
+                    styles.selectedCategoryText,
+                ]}
+              >
+                {category.name}
+              </TextBox>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+    );
+  }
+);
 
 const styles = StyleSheet.create({
   container: {

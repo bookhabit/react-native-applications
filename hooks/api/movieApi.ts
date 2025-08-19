@@ -105,23 +105,39 @@ export const useMovieDetail = (movieId: number) => {
   });
 };
 
-// 이미지 URL 생성 헬퍼 함수
+// 이미지 URL 생성 헬퍼 함수 (expo-image 최적화)
 export const getImageUrl = (path: string | null, size: string = "w500") => {
   if (!path) return null;
   return `${API_ENDPOINT.TMDB.IMAGE_BASE_URL}/${size}${path}`;
 };
 
-// 포스터 이미지 URL
+// 포스터 이미지 URL (썸네일용)
 export const getPosterUrl = (path: string | null, size: string = "w500") => {
   return getImageUrl(path, size);
 };
 
-// 배경 이미지 URL
+// 배경 이미지 URL (고해상도)
 export const getBackdropUrl = (path: string | null, size: string = "w1280") => {
   return getImageUrl(path, size);
 };
 
-// 썸네일 이미지 URL
+// 썸네일 이미지 URL (리스트용)
 export const getThumbnailUrl = (path: string | null) => {
   return getImageUrl(path, "w200");
+};
+
+// expo-image 최적화를 위한 이미지 크기별 URL
+export const getOptimizedImageUrl = (
+  path: string | null,
+  type: "poster" | "backdrop" | "thumbnail" = "poster"
+) => {
+  if (!path) return null;
+
+  const sizes = {
+    poster: "w500",
+    backdrop: "w1280",
+    thumbnail: "w200",
+  };
+
+  return `${API_ENDPOINT.TMDB.IMAGE_BASE_URL}/${sizes[type]}${path}`;
 };
