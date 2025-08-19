@@ -244,9 +244,6 @@ export default function MoviesScreen() {
     return (
       <View style={styles.footerLoader}>
         <ActivityIndicator size="small" color={Colors.primary} />
-        <TextBox type="body3" style={styles.footerText}>
-          더 많은 영화를 불러오는 중...
-        </TextBox>
       </View>
     );
   }, [isFetchingNext, isFavoritesMode]);

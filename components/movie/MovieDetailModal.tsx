@@ -59,7 +59,7 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
     <Modal
       visible={visible}
       animationType="slide"
-      presentationStyle="pageSheet"
+      presentationStyle="fullScreen"
       onRequestClose={onClose}
     >
       <View style={styles.container}>
@@ -132,7 +132,11 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
               </TextBox>
 
               {movie.tagline && (
-                <TextBox type="body2" style={styles.tagline}>
+                <TextBox
+                  type="body2"
+                  style={styles.tagline}
+                  lightColor={Colors.white}
+                >
                   "{movie.tagline}"
                 </TextBox>
               )}
@@ -143,9 +147,13 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
                     <Ionicons
                       name="calendar-outline"
                       size={16}
-                      color={Colors.textSecondary}
+                      color={Colors.white}
                     />
-                    <TextBox type="body3" style={styles.metaText}>
+                    <TextBox
+                      type="body3"
+                      style={styles.metaText}
+                      lightColor={Colors.white}
+                    >
                       {new Date(movie.release_date).getFullYear()}
                     </TextBox>
                   </View>
@@ -156,9 +164,13 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
                     <Ionicons
                       name="time-outline"
                       size={16}
-                      color={Colors.textSecondary}
+                      color={Colors.white}
                     />
-                    <TextBox type="body3" style={styles.metaText}>
+                    <TextBox
+                      type="body3"
+                      style={styles.metaText}
+                      lightColor={Colors.white}
+                    >
                       {formatRuntime(movie.runtime)}
                     </TextBox>
                   </View>
@@ -167,7 +179,11 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
                 {movie.vote_average > 0 && (
                   <View style={styles.metaItem}>
                     <Ionicons name="star" size={16} color={Colors.warning} />
-                    <TextBox type="body3" style={styles.metaText}>
+                    <TextBox
+                      type="body3"
+                      style={styles.metaText}
+                      lightColor={Colors.white}
+                    >
                       {movie.vote_average.toFixed(1)}
                     </TextBox>
                   </View>
@@ -178,7 +194,11 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
                 <View style={styles.genresContainer}>
                   {movie.genres.map((genre) => (
                     <View key={genre.id} style={styles.genreTag}>
-                      <TextBox type="body3" style={styles.genreText}>
+                      <TextBox
+                        type="body3"
+                        style={styles.genreText}
+                        lightColor={Colors.white}
+                      >
                         {genre.name}
                       </TextBox>
                     </View>
@@ -281,7 +301,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 20,
-    paddingTop: 60,
+    paddingTop: 40,
     paddingBottom: 10,
     zIndex: 10,
   },
