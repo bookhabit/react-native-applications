@@ -1,7 +1,7 @@
 import { useFavorites } from "@/hooks/useFavorites";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { act, renderHook, waitFor } from "@testing-library/react-native";
-import { mockMovie, mockMovie2 } from "../testData";
+import { mockMovie, mockMovie2 } from "../testData.helper";
 
 // AsyncStorage Mock
 const mockAsyncStorage = AsyncStorage as jest.Mocked<typeof AsyncStorage>;
@@ -10,6 +10,9 @@ describe("useFavorites 훅 테스트", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockAsyncStorage.clear();
+    // AsyncStorage 모킹 초기화
+    mockAsyncStorage.setItem.mockResolvedValue();
+    mockAsyncStorage.getItem.mockResolvedValue(null);
   });
 
   afterEach(() => {
@@ -155,7 +158,7 @@ describe("useFavorites 훅 테스트", () => {
   it("AsyncStorage에 즐겨찾기 데이터 저장", async () => {
     const { result } = renderHook(() => useFavorites());
 
-    act(() => {
+    await act(async () => {
       result.current.addToFavorites(mockMovie);
     });
 

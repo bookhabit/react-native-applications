@@ -1,7 +1,7 @@
 import { MovieDetailModal } from "@/components/movie/MovieDetailModal";
 import { fireEvent, render } from "@testing-library/react-native";
 import React from "react";
-import { mockMovieDetail } from "../../testData";
+import { mockMovieDetail } from "../../testData.helper";
 
 // Mock expo-image
 jest.mock("expo-image", () => ({

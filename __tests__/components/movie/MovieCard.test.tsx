@@ -1,7 +1,7 @@
 import { MovieCard } from "@/components/movie/MovieCard";
 import { fireEvent, render } from "@testing-library/react-native";
 import React from "react";
-import { mockMovie } from "../../testData";
+import { mockMovie } from "../../testData.helper";
 
 // Mock expo-image
 jest.mock("expo-image", () => ({

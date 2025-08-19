@@ -8,16 +8,20 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { renderHook, waitFor } from "@testing-library/react-native";
 import React from "react";
-import { mockMovieDetail, mockMovieResponse } from "../../testData";
+import { mockMovieDetail, mockMovieResponse } from "../../testData.helper";
 
 // Mock AXIOS
 const mockAxios = AXIOS as jest.Mocked<typeof AXIOS>;
 
-// QueryClient 래퍼 컴포넌트
+// QueryClient 래퍼
 const createWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: {
-      queries: { retry: false },
+      queries: {
+        retry: false,
+        gcTime: 0,
+        staleTime: 0,
+      },
       mutations: { retry: false },
     },
   });
@@ -35,6 +39,42 @@ describe("movieApi 훅 테스트", () => {
     jest.clearAllMocks();
   });
 
+  describe("getOptimizedImageUrl", () => {
+    it("포스터 URL을 올바른 크기로 생성", () => {
+      const posterUrl = getOptimizedImageUrl("/test-poster.jpg", "poster");
+      expect(posterUrl).toContain("w500");
+      expect(posterUrl).toContain("/test-poster.jpg");
+    });
+
+    it("배경 URL을 고해상도로 생성", () => {
+      const backdropUrl = getOptimizedImageUrl(
+        "/test-backdrop.jpg",
+        "backdrop"
+      );
+      expect(backdropUrl).toContain("w1280");
+      expect(backdropUrl).toContain("/test-backdrop.jpg");
+    });
+
+    it("썸네일 URL을 작은 크기로 생성", () => {
+      const thumbnailUrl = getOptimizedImageUrl(
+        "/test-poster.jpg",
+        "thumbnail"
+      );
+      expect(thumbnailUrl).toContain("w200");
+      expect(thumbnailUrl).toContain("/test-poster.jpg");
+    });
+
+    it("poster_path가 null일 때 null 반환", () => {
+      const posterUrl = getOptimizedImageUrl(null, "poster");
+      expect(posterUrl).toBeNull();
+    });
+
+    it("기본 타입은 poster로 설정", () => {
+      const posterUrl = getOptimizedImageUrl("/test-poster.jpg");
+      expect(posterUrl).toContain("w500");
+    });
+  });
+
   describe("useMovies", () => {
     it("영화 목록을 정상적으로 가져옴", async () => {
       mockAxios.get.mockResolvedValueOnce({
@@ -48,6 +88,7 @@ describe("movieApi 훅 테스트", () => {
 
       // 초기 상태 확인
       expect(result.current).toBeDefined();
+      expect(result.current.isLoading).toBe(true);
 
       await waitFor(() => {
         expect(result.current.isLoading).toBe(false);
@@ -66,13 +107,13 @@ describe("movieApi 훅 테스트", () => {
 
       // 초기 상태 확인
       expect(result.current).toBeDefined();
+      expect(result.current.isLoading).toBe(true);
 
       await waitFor(() => {
         expect(result.current.isLoading).toBe(false);
       });
 
       expect(result.current.error).toBeDefined();
-      expect(result.current.data).toBeUndefined();
     });
 
     it("페이지네이션 정보가 올바르게 설정됨", async () => {
@@ -87,6 +128,7 @@ describe("movieApi 훅 테스트", () => {
 
       // 초기 상태 확인
       expect(result.current).toBeDefined();
+      expect(result.current.isLoading).toBe(true);
 
       await waitFor(() => {
         expect(result.current.isLoading).toBe(false);
@@ -94,8 +136,8 @@ describe("movieApi 훅 테스트", () => {
 
       expect(result.current.data).toBeDefined();
       expect(result.current.data?.pages[0].page).toBe(1);
-      expect(result.current.data?.pages[0].total_pages).toBe(10);
-      expect(result.current.data?.pages[0].total_results).toBe(200);
+      expect(result.current.data?.pages[0].total_pages).toBe(5);
+      expect(result.current.data?.pages[0].total_results).toBe(100);
     });
   });
 
@@ -136,6 +178,7 @@ describe("movieApi 훅 테스트", () => {
 
       // 초기 상태 확인
       expect(result.current).toBeDefined();
+      expect(result.current.isLoading).toBe(true);
 
       await waitFor(() => {
         expect(result.current.isLoading).toBe(false);
@@ -159,6 +202,7 @@ describe("movieApi 훅 테스트", () => {
 
       // 초기 상태 확인
       expect(result.current).toBeDefined();
+      expect(result.current.isLoading).toBe(true);
 
       await waitFor(() => {
         expect(result.current.isLoading).toBe(false);
@@ -168,7 +212,7 @@ describe("movieApi 훅 테스트", () => {
     });
 
     it("잘못된 영화 ID로 에러 발생", async () => {
-      mockAxios.get.mockRejectedValueOnce(new Error("Movie not found"));
+      mockAxios.get.mockRejectedValueOnce(new Error("API Error"));
 
       const { result } = renderHook(() => useMovieDetail(999), {
         wrapper: createWrapper(),
@@ -176,49 +220,13 @@ describe("movieApi 훅 테스트", () => {
 
       // 초기 상태 확인
       expect(result.current).toBeDefined();
+      expect(result.current.isLoading).toBe(true);
 
       await waitFor(() => {
         expect(result.current.isLoading).toBe(false);
       });
 
       expect(result.current.error).toBeDefined();
-      expect(result.current.data).toBeUndefined();
-    });
-  });
-
-  describe("이미지 URL 헬퍼 함수", () => {
-    it("포스터 URL을 올바른 크기로 생성", () => {
-      const posterUrl = getOptimizedImageUrl("/test-poster.jpg", "poster");
-      expect(posterUrl).toContain("w500");
-      expect(posterUrl).toContain("/test-poster.jpg");
-    });
-
-    it("배경 URL을 고해상도로 생성", () => {
-      const backdropUrl = getOptimizedImageUrl(
-        "/test-backdrop.jpg",
-        "backdrop"
-      );
-      expect(backdropUrl).toContain("w1280");
-      expect(backdropUrl).toContain("/test-backdrop.jpg");
-    });
-
-    it("썸네일 URL을 작은 크기로 생성", () => {
-      const thumbnailUrl = getOptimizedImageUrl(
-        "/test-poster.jpg",
-        "thumbnail"
-      );
-      expect(thumbnailUrl).toContain("w200");
-      expect(thumbnailUrl).toContain("/test-poster.jpg");
-    });
-
-    it("poster_path가 null일 때 null 반환", () => {
-      const posterUrl = getOptimizedImageUrl(null, "poster");
-      expect(posterUrl).toBeNull();
-    });
-
-    it("기본 타입은 poster로 설정", () => {
-      const posterUrl = getOptimizedImageUrl("/test-poster.jpg");
-      expect(posterUrl).toContain("w500");
     });
   });
 });

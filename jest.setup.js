@@ -8,9 +8,6 @@ global.React = React;
 process.env.EXPO_PUBLIC_MOVIE_API_KEY = "test-api-key";
 process.env.EXPO_PUBLIC_MOVIE_API_URL = "https://api.themoviedb.org/3";
 
-// 타이머 설정
-jest.useFakeTimers();
-
 // Mock expo-image
 jest.mock("expo-image", () => ({
   Image: "Image",
@@ -48,13 +45,6 @@ jest.mock("expo-constants", () => ({
       TMDB_API_KEY: "test-api-key",
     },
   },
-}));
-
-// Mock @tanstack/react-query
-jest.mock("@tanstack/react-query", () => ({
-  ...jest.requireActual("@tanstack/react-query"),
-  useQuery: jest.fn(),
-  useInfiniteQuery: jest.fn(),
 }));
 
 // Mock axios
