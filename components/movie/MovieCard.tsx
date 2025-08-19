@@ -87,7 +87,12 @@ export const MovieCard: React.FC<MovieCardProps> = memo(
           {movie.vote_average > 0 && (
             <View style={styles.ratingContainer}>
               <Ionicons name="star" size={12} color={Colors.warning} />
-              <TextBox type="body3" style={styles.rating}>
+              <TextBox
+                type="body3"
+                style={styles.rating}
+                lightColor={Colors.white}
+                darkColor={Colors.white}
+              >
                 {formatRating(movie.vote_average)}
               </TextBox>
             </View>
@@ -156,7 +161,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   rating: {
-    color: Colors.text,
     marginLeft: 2,
     fontSize: 10,
   },

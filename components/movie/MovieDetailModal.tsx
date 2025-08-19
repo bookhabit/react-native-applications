@@ -371,7 +371,6 @@ const styles = StyleSheet.create({
     lineHeight: 28,
   },
   tagline: {
-    color: Colors.textSecondary,
     fontStyle: "italic",
     marginBottom: 16,
   },
@@ -386,9 +385,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 4,
   },
-  metaText: {
-    color: Colors.textSecondary,
-  },
+  metaText: {},
   genresContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -401,7 +398,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   genreText: {
-    color: Colors.text,
     fontSize: 12,
   },
   section: {
