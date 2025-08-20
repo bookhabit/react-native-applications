@@ -11,7 +11,7 @@ export default function ApplicationScreen() {
   const appFeatures = [
     // 기본 앱 기능
     { title: '할 일 관리', icon: 'checkmark-circle', route: '/todo', color: '#4CAF50', category: '기본 앱' },
-    { title: '날씨 확인', icon: 'partly-sunny', route: '/weather', color: '#2196F3', category: '기본 앱' },
+    { title: '날씨 확인', icon: 'partly-sunny', route: '/weather', color: '#2196F9', category: '기본 앱' },
     { title: '메모 작성', icon: 'document-text', route: '/notes', color: '#FF9800', category: '기본 앱' },
     { title: '채팅', icon: 'chatbubbles', route: '/chat', color: '#9C27B0', category: '기본 앱' },
     { title: '영화 정보', icon: 'film', route: '/movies', color: '#E91E63', category: '기본 앱' },
@@ -23,16 +23,21 @@ export default function ApplicationScreen() {
     { title: '모달', icon: 'square', route: '/modal', color: '#FFC107', category: '기본 앱' },
     
     // 네이티브 기능
-    { title: '카메라', icon: 'camera', route: '/camera', color: '#4CAF50', category: '네이티브' },
-    { title: '위치 서비스', icon: 'location', route: '/location', color: '#2196F3', category: '네이티브' },
-    { title: '푸시 알림', icon: 'notifications', route: '/notifications', color: '#FF9800', category: '네이티브' },
-    { title: '생체 인증', icon: 'finger-print', route: '/biometrics', color: '#9C27B0', category: '네이티브' },
+    { title: 'Mini Health Tracker', icon: 'fitness', route: '/(drawer)/application/native/mini-health-tracker', color: '#4CAF50', category: '네이티브' },
+    { title: 'Sensor Playground', icon: 'phone-portrait', route: '/(drawer)/application/native/sensor-playground', color: '#2196F3', category: '네이티브' },
+    { title: 'Media Notes', icon: 'camera', route: '/(drawer)/application/native/media-notes', color: '#FF9800', category: '네이티브' },
+    { title: 'Trip Logger', icon: 'location', route: '/(drawer)/application/native/trip-logger', color: '#9C27B0', category: '네이티브' },
+    { title: 'Utility Kit', icon: 'settings', route: '/(drawer)/application/native/utility-kit', color: '#E91E63', category: '네이티브' },
+    { title: 'Simple Shop', icon: 'cart', route: '/(drawer)/application/native/simple-shop', color: '#607D8B', category: '네이티브' },
+    { title: 'Secure Notes', icon: 'shield-checkmark', route: '/(drawer)/application/native/secure-notes', color: '#795548', category: '네이티브' },
+    { title: 'Mini File Explorer', icon: 'folder', route: '/(drawer)/application/native/mini-file-explorer', color: '#FF5722', category: '네이티브' },
     
     // 애니메이션
-    { title: '페이드 애니메이션', icon: 'eye', route: '/fade', color: '#E91E63', category: '애니메이션' },
-    { title: '슬라이드 애니메이션', icon: 'arrow-forward', route: '/slide', color: '#607D8B', category: '애니메이션' },
-    { title: '스케일 애니메이션', icon: 'resize', route: '/scale', color: '#795548', category: '애니메이션' },
-    { title: '회전 애니메이션', icon: 'refresh', route: '/rotate', color: '#FF5722', category: '애니메이션' },
+    { title: 'Quiz Hero', icon: 'help-circle', route: '/(drawer)/application/animation/quiz-hero', color: '#E91E63', category: '애니메이션' },
+    { title: 'Money Journey', icon: 'wallet', route: '/(drawer)/application/animation/money-journey', color: '#607D8B', category: '애니메이션' },
+    { title: 'Cook Explorer', icon: 'restaurant', route: '/(drawer)/application/animation/cook-explorer', color: '#795548', category: '애니메이션' },
+    { title: 'Travel Dreams', icon: 'airplane', route: '/(drawer)/application/animation/travel-dreams', color: '#FF5722', category: '애니메이션' },
+    { title: 'MindFlow', icon: 'leaf', route: '/(drawer)/application/animation/mind-flow', color: '#00BCD4', category: '애니메이션' },
   ];
 
   const categories = ['기본 앱', '네이티브', '애니메이션'];

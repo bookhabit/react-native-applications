@@ -10,13 +10,13 @@ export default function GameScreen() {
 
   const gameFeatures = [
     { title: '퀴즈 게임', icon: 'help-circle', route: '/quiz', color: '#4CAF50', description: '다양한 퀴즈 문제' },
-    { title: '틱택토', icon: 'grid', route: '/tictactoe', color: '#2196F3', description: '3x3 틱택토 게임' },
-    { title: '메모리 게임', icon: 'card', route: '/memory', color: '#FF9800', description: '카드 짝 맞추기' },
-    { title: '숫자 맞추기', icon: 'calculator', route: '/numberguess', color: '#9C27B0', description: '숫자 추측 게임' },
-    { title: '단어 게임', icon: 'text', route: '/wordgame', color: '#E91E63', description: '단어 맞추기' },
-    { title: '퍼즐', icon: 'puzzle', route: '/puzzle', color: '#607D8B', description: '슬라이딩 퍼즐' },
-    { title: '리듬 게임', icon: 'musical-notes', route: '/rhythm', color: '#795548', description: '리듬에 맞춰 탭하기' },
-    { title: '스네이크', icon: 'git-branch', route: '/snake', color: '#FF5722', description: '클래식 스네이크 게임' },
+    { title: '틱택토', icon: 'grid', route: '/(drawer)/game/tictactoe', color: '#2196F3', description: '3x3 틱택토 게임' },
+    { title: '메모리 게임', icon: 'card', route: '/(drawer)/game/memory', color: '#FF9800', description: '카드 짝 맞추기' },
+    { title: '숫자 맞추기', icon: 'calculator', route: '/(drawer)/game/numberguess', color: '#9C27B0', description: '숫자 추측 게임' },
+    { title: '단어 게임', icon: 'text', route: '/(drawer)/game/wordgame', color: '#E91E63', description: '단어 맞추기' },
+    { title: '퍼즐', icon: 'grid', route: '/(drawer)/game/puzzle', color: '#607D8B', description: '슬라이딩 퍼즐' },
+    { title: '리듬 게임', icon: 'musical-notes', route: '/(drawer)/game/rhythm', color: '#795548', description: '리듬에 맞춰 탭하기' },
+    { title: '스네이크', icon: 'git-branch', route: '/(drawer)/game/snake', color: '#FF5722', description: '클래식 스네이크 게임' },
   ];
 
   return (

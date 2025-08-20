@@ -20,15 +20,6 @@ export default function DrawerLayout() {
         },
       }}>
       <Drawer.Screen
-        name="(tabs)"
-        options={{
-          title: 'Application',
-          drawerIcon: ({ color, size }) => (
-            <Ionicons name="apps" size={size} color={color} />
-          ),
-        }}
-      />
-      <Drawer.Screen
         name="application"
         options={{
           title: 'Application',
