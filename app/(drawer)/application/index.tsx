@@ -13,7 +13,6 @@ export default function ApplicationScreen() {
     { title: '할 일 관리', icon: 'checkmark-circle', route: '/(drawer)/application/basic/todo', color: '#4CAF50', category: '기본 앱' },
     { title: '날씨 확인', icon: 'partly-sunny', route: '/(drawer)/application/basic/weather', color: '#2196F9', category: '기본 앱' },
     { title: '메모 작성', icon: 'document-text', route: '/(drawer)/application/basic/notes', color: '#FF9800', category: '기본 앱' },
-    { title: '채팅', icon: 'chatbubbles', route: '/(drawer)/application/basic/chat', color: '#9C27B0', category: '기본 앱' },
     { title: '영화 정보', icon: 'film', route: '/(drawer)/application/basic/movies', color: '#E91E63', category: '기본 앱' },
     { title: '캘린더', icon: 'calendar', route: '/(drawer)/application/basic/calendar', color: '#607D8B', category: '기본 앱' },
     { title: '갤러리', icon: 'images', route: '/(drawer)/application/basic/gallery', color: '#795548', category: '기본 앱' },
