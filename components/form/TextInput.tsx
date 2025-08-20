@@ -1,12 +1,12 @@
+import { TextBox } from "@/components/atom/TextBox";
 import React from "react";
+import { Control, Controller, FieldValues, Path } from "react-hook-form";
 import {
   TextInput as RNTextInput,
   StyleSheet,
-  View,
   TextInputProps,
+  View,
 } from "react-native";
-import { TextBox } from "@/components/atom/TextBox";
-import { Control, Controller, FieldValues, Path } from "react-hook-form";
 
 interface CustomTextInputProps extends TextInputProps {
   label?: string;
@@ -21,7 +21,7 @@ interface ControlledTextInputProps<T extends FieldValues>
   rules?: any;
 }
 
-export const TextInput: React.FC<CustomTextInputProps> = ({
+const TextInput: React.FC<CustomTextInputProps> = ({
   label,
   error,
   containerStyle,

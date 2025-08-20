@@ -1,9 +1,9 @@
 import { TextBox } from "@/components/atom/TextBox";
 import { Button } from "@/components/form/Button";
-import { TextInput } from "@/components/form/TextInput";
+
 import { ThemedView } from "@/components/ThemedView";
 import React, { useEffect, useRef, useState } from "react";
-import { Alert, ScrollView, StyleSheet, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, TextInput, View } from "react-native";
 
 import { Colors } from "@/constants/Colors";
 import * as Sensors from "expo-sensors";
