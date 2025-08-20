@@ -1,8 +1,18 @@
 import { Colors } from '@/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
+import { usePathname } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
 
 export default function DrawerLayout() {
+  
+  const currentPath = usePathname();
+  
+  const showHeader = ()=>{
+    if(currentPath === '/application' || currentPath === '/game'){
+      return true;
+    }
+    return false;
+  }
   return (
     <Drawer
       screenOptions={({ route }) => ({
@@ -13,8 +23,8 @@ export default function DrawerLayout() {
         headerTitleStyle: {
           fontWeight: 'bold',
         },
-        // application과 game의 메인 화면에서만 헤더 표시
-        headerShown: route.name === 'application' || route.name === 'game',
+        // application과 game의 메인 화면에서만 헤더 표시 (하위 스크린 제외)
+        headerShown: showHeader(),
         drawerActiveTintColor: Colors.light.tint,
         drawerInactiveTintColor: Colors.light.text,
         drawerStyle: {
