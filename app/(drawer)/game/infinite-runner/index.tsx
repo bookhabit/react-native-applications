@@ -1,7 +1,6 @@
 import { TextBox } from "@/components/atom/TextBox";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
-import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -18,7 +17,7 @@ export default function InfiniteRunnerScreen() {
       </View>
       
       <View style={styles.gameArea}>
-        <Ionicons name="person-running" size={80} color={Colors.light.tint} />
+        
         <Text style={styles.comingSoon}>게임 개발 예정</Text>
         <Text style={styles.gameDescription}>
           점프와 회피로 장애물을 피하며 최고 거리를 달성하는 액션 게임입니다.
