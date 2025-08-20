@@ -5,7 +5,7 @@ import { Drawer } from 'expo-router/drawer';
 export default function DrawerLayout() {
   return (
     <Drawer
-      screenOptions={{
+      screenOptions={({ route }) => ({
         headerStyle: {
           backgroundColor: Colors.light.tint,
         },
@@ -13,12 +13,14 @@ export default function DrawerLayout() {
         headerTitleStyle: {
           fontWeight: 'bold',
         },
+        // application과 game의 메인 화면에서만 헤더 표시
+        headerShown: route.name === 'application' || route.name === 'game',
         drawerActiveTintColor: Colors.light.tint,
         drawerInactiveTintColor: Colors.light.text,
         drawerStyle: {
           backgroundColor: Colors.light.background,
         },
-      }}>
+      })}>
       <Drawer.Screen
         name="application"
         options={{

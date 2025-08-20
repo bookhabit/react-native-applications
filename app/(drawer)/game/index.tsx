@@ -9,7 +9,7 @@ export default function GameScreen() {
   const router = useRouter() as any;
 
   const gameFeatures = [
-    { title: '퀴즈 게임', icon: 'help-circle', route: '/quiz', color: '#4CAF50', description: '다양한 퀴즈 문제' },
+    { title: '퀴즈 게임', icon: 'help-circle', route: '/(drawer)/application/basic/quiz', color: '#4CAF50', description: '다양한 퀴즈 문제' },
     { title: '틱택토', icon: 'grid', route: '/(drawer)/game/tictactoe', color: '#2196F3', description: '3x3 틱택토 게임' },
     { title: '메모리 게임', icon: 'card', route: '/(drawer)/game/memory', color: '#FF9800', description: '카드 짝 맞추기' },
     { title: '숫자 맞추기', icon: 'calculator', route: '/(drawer)/game/numberguess', color: '#9C27B0', description: '숫자 추측 게임' },
@@ -21,10 +21,6 @@ export default function GameScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.subtitle}>재미있는 게임들을 즐겨보세요</Text>
-      </View>
-
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.featureGrid}>
           {gameFeatures.map((feature, index) => (
@@ -66,6 +62,7 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
     padding: 20,
+    paddingTop: 20,
   },
   featureGrid: {
     flexDirection: 'row',

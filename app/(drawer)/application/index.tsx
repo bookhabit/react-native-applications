@@ -10,17 +10,18 @@ export default function ApplicationScreen() {
 
   const appFeatures = [
     // 기본 앱 기능
-    { title: '할 일 관리', icon: 'checkmark-circle', route: '/todo', color: '#4CAF50', category: '기본 앱' },
-    { title: '날씨 확인', icon: 'partly-sunny', route: '/weather', color: '#2196F9', category: '기본 앱' },
-    { title: '메모 작성', icon: 'document-text', route: '/notes', color: '#FF9800', category: '기본 앱' },
-    { title: '채팅', icon: 'chatbubbles', route: '/chat', color: '#9C27B0', category: '기본 앱' },
-    { title: '영화 정보', icon: 'film', route: '/movies', color: '#E91E63', category: '기본 앱' },
-    { title: '캘린더', icon: 'calendar', route: '/calendar', color: '#607D8B', category: '기본 앱' },
-    { title: '갤러리', icon: 'images', route: '/gallery', color: '#795548', category: '기본 앱' },
-    { title: '쇼핑', icon: 'cart', route: '/shop', color: '#FF5722', category: '기본 앱' },
-    { title: '폼 예제', icon: 'list', route: '/form', color: '#3F51B5', category: '기본 앱' },
-    { title: '액션 시트', icon: 'menu', route: '/action-sheet', color: '#009688', category: '기본 앱' },
-    { title: '모달', icon: 'square', route: '/modal', color: '#FFC107', category: '기본 앱' },
+    { title: '할 일 관리', icon: 'checkmark-circle', route: '/(drawer)/application/basic/todo', color: '#4CAF50', category: '기본 앱' },
+    { title: '날씨 확인', icon: 'partly-sunny', route: '/(drawer)/application/basic/weather', color: '#2196F9', category: '기본 앱' },
+    { title: '메모 작성', icon: 'document-text', route: '/(drawer)/application/basic/notes', color: '#FF9800', category: '기본 앱' },
+    { title: '채팅', icon: 'chatbubbles', route: '/(drawer)/application/basic/chat', color: '#9C27B0', category: '기본 앱' },
+    { title: '영화 정보', icon: 'film', route: '/(drawer)/application/basic/movies', color: '#E91E63', category: '기본 앱' },
+    { title: '캘린더', icon: 'calendar', route: '/(drawer)/application/basic/calendar', color: '#607D8B', category: '기본 앱' },
+    { title: '갤러리', icon: 'images', route: '/(drawer)/application/basic/gallery', color: '#795548', category: '기본 앱' },
+    { title: '쇼핑', icon: 'cart', route: '/(drawer)/application/basic/shop', color: '#FF5722', category: '기본 앱' },
+    { title: '폼 예제', icon: 'list', route: '/(drawer)/application/basic/form', color: '#3F51B5', category: '기본 앱' },
+    { title: '액션 시트', icon: 'menu', route: '/(drawer)/application/basic/action-sheet', color: '#009688', category: '기본 앱' },
+    { title: '모달', icon: 'square', route: '/(drawer)/application/basic/modal', color: '#FFC107', category: '기본 앱' },
+    { title: '스텝 카운터', icon: 'footsteps', route: '/(drawer)/application/basic/step-counter', color: '#00BCD4', category: '기본 앱' },
     
     // 네이티브 기능
     { title: 'Mini Health Tracker', icon: 'fitness', route: '/(drawer)/application/native/mini-health-tracker', color: '#4CAF50', category: '네이티브' },
@@ -44,10 +45,6 @@ export default function ApplicationScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.subtitle}>다양한 앱 기능들을 체험해보세요</Text>
-      </View>
-
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {categories.map((category) => (
           <View key={category} style={styles.categorySection}>
@@ -95,9 +92,10 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
     padding: 20,
+    paddingTop: 20,
   },
   categorySection: {
-    marginBottom: 30,
+    
   },
   categoryTitle: {
     fontSize: 20,
