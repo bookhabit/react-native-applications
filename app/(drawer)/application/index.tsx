@@ -21,6 +21,10 @@ export default function ApplicationScreen() {
     { title: '액션 시트', icon: 'menu', route: '/(drawer)/application/basic/action-sheet', color: '#009688', category: '기본 앱' },
     { title: '모달', icon: 'square', route: '/(drawer)/application/basic/modal', color: '#FFC107', category: '기본 앱' },
     { title: '스텝 카운터', icon: 'footsteps', route: '/(drawer)/application/basic/step-counter', color: '#00BCD4', category: '기본 앱' },
+    { title: '계산기', icon: 'calculator', route: '/(drawer)/application/basic/calculator', color: '#9C27B0', category: '기본 앱' },
+    { title: '이벤트 테스트', icon: 'hand-left', route: '/(drawer)/application/basic/event-test', color: '#FF5722', category: '기본 앱' },
+    { title: '대화상자 & 팝업 & 알림', icon: 'notifications', route: '/(drawer)/application/basic/dialog-popup-notification', color: '#F44336', category: '기본 앱' },
+    { title: '리스트 뷰', icon: 'list', route: '/(drawer)/application/basic/list-view', color: '#2196F3', category: '기본 앱' },
     
     // 네이티브 기능
     { title: 'Mini Health Tracker', icon: 'fitness', route: '/(drawer)/application/native/mini-health-tracker', color: '#4CAF50', category: '네이티브' },
