@@ -42,7 +42,7 @@ export default function RootLayout() {
           <ThemeProvider
             value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
           >
-                      <Stack>
+          <Stack>
             <Stack.Screen
               name="(drawer)"
               options={{
