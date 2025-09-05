@@ -1,99 +1,63 @@
+import { useState, useEffect, useRef } from 'react';
+import { StyleSheet, Text, View, Alert, ScrollView, TextInput } from 'react-native';
+import { Pedometer } from 'expo-sensors';
 import { TextBox } from "@/components/atom/TextBox";
 import { Button } from "@/components/form/Button";
-
 import { ThemedView } from "@/components/ThemedView";
-import React, { useEffect, useRef, useState } from "react";
-import { Alert, ScrollView, StyleSheet, TextInput, View } from "react-native";
-
 import { Colors } from "@/constants/Colors";
-import * as Sensors from "expo-sensors";
-
-interface StepData {
-  date: string;
-  steps: number;
-  goal: number;
-}
 
 export default function StepCounterScreen() {
-  const [isTracking, setIsTracking] = useState(false);
-  const [currentSteps, setCurrentSteps] = useState(0);
+  const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
+  const [pastStepCount, setPastStepCount] = useState(0);
+  const [currentStepCount, setCurrentStepCount] = useState(0);
   const [dailyGoal, setDailyGoal] = useState(10000);
   const [goalInput, setGoalInput] = useState("10000");
-  const [stepHistory, setStepHistory] = useState<StepData[]>([]);
   const [showGoalInput, setShowGoalInput] = useState(false);
   const [goalAchieved, setGoalAchieved] = useState(false);
-
+  const [isTracking, setIsTracking] = useState(false);
+  
   const subscription = useRef<any>(null);
-  const lastAcceleration = useRef<number>(0);
-  const stepThreshold = 1.2; // 걸음 감지 임계값
-  const cooldownTime = 300; // 걸음 감지 후 대기 시간 (ms)
-  const lastStepTime = useRef<number>(0);
 
-  useEffect(() => {
-    // 앱 시작 시 저장된 데이터 불러오기
-    loadStepData();
+  const subscribe = async () => {
+    const isAvailable = await Pedometer.isAvailableAsync();
+    setIsPedometerAvailable(String(isAvailable));
 
-    return () => {
-      if (subscription.current) {
-        subscription.current.remove();
-      }
-    };
-  }, []);
+    if (isAvailable) {
+      // 오늘 00:00부터 현재까지의 걸음수 가져오기
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const now = new Date();
 
-  const loadStepData = () => {
-    // AsyncStorage나 다른 저장소에서 데이터 불러오기
-    // 여기서는 간단한 예시로 하드코딩
-    const today = new Date().toISOString().split("T")[0];
-    const existingData = stepHistory.find((data) => data.date === today);
-    if (existingData) {
-      setCurrentSteps(existingData.steps);
-    }
-  };
-
-  const startTracking = async () => {
-    try {
-      const { status } = await Sensors.Accelerometer.requestPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert("권한 필요", "가속도 센서 접근 권한이 필요합니다.");
-        return;
-      }
-
-      setIsTracking(true);
-      subscription.current = Sensors.Accelerometer.addListener(
-        ({ x, y, z }) => {
-          const acceleration = Math.sqrt(x * x + y * y + z * z);
-          const currentTime = Date.now();
-
-          // 걸음 감지 로직
-          if (
-            acceleration > stepThreshold &&
-            acceleration > lastAcceleration.current &&
-            currentTime - lastStepTime.current > cooldownTime
-          ) {
-            const newSteps = currentSteps + 1;
-            setCurrentSteps((prev) => prev + 1);
-
-            // 목표 달성 체크
-            if (newSteps >= dailyGoal && !goalAchieved) {
-              setGoalAchieved(true);
-              // 목표 달성 알림
-              Alert.alert(
-                "🎉 목표 달성!",
-                `축하합니다! 오늘 ${newSteps.toLocaleString()}걸음 목표를 달성했습니다!`
-              );
-            }
-
-            lastStepTime.current = currentTime;
-          }
-
-          lastAcceleration.current = acceleration;
+      try {
+        const pastStepCountResult = await Pedometer.getStepCountAsync(today, now);
+        console.log('오늘 걸음수:', pastStepCountResult);
+        if (pastStepCountResult) {
+          setPastStepCount(pastStepCountResult.steps);
+          setCurrentStepCount(pastStepCountResult.steps);
         }
-      );
+      } catch (error) {
+        console.log('걸음수 조회 오류:', error);
+      }
 
-      Sensors.Accelerometer.setUpdateInterval(100); // 100ms마다 업데이트
-    } catch (error) {
-      Alert.alert("오류", "센서를 시작할 수 없습니다.");
+      // 실시간 걸음수 추적 시작
+      setIsTracking(true);
+      const newSubscription = Pedometer.watchStepCount(result => {
+        console.log('실시간 걸음수:', result.steps);
+        setCurrentStepCount(result.steps);
+        
+        // 목표 달성 체크
+        if (result.steps >= dailyGoal && !goalAchieved) {
+          setGoalAchieved(true);
+          Alert.alert(
+            "🎉 목표 달성!",
+            `축하합니다! 오늘 ${result.steps.toLocaleString()}걸음 목표를 달성했습니다!`
+          );
+        }
+      });
+      
+      return newSubscription;
     }
+    return null;
   };
 
   const stopTracking = () => {
@@ -104,24 +68,6 @@ export default function StepCounterScreen() {
     setIsTracking(false);
   };
 
-  const resetSteps = () => {
-    Alert.alert(
-      "걸음 수 초기화",
-      "오늘의 걸음 수를 0으로 초기화하시겠습니까?",
-      [
-        { text: "취소", style: "cancel" },
-        {
-          text: "초기화",
-          style: "destructive",
-          onPress: () => {
-            setCurrentSteps(0);
-            setGoalAchieved(false);
-          },
-        },
-      ]
-    );
-  };
-
   const saveDailyGoal = () => {
     const goal = parseInt(goalInput);
     if (isNaN(goal) || goal <= 0) {
@@ -130,13 +76,13 @@ export default function StepCounterScreen() {
     }
 
     setDailyGoal(goal);
-    setGoalAchieved(currentSteps >= goal);
+    setGoalAchieved(currentStepCount >= goal);
     setShowGoalInput(false);
     setGoalInput(goal.toString());
   };
 
   const getProgressPercentage = () => {
-    return Math.min((currentSteps / dailyGoal) * 100, 100);
+    return Math.min((currentStepCount / dailyGoal) * 100, 100);
   };
 
   const getProgressColor = () => {
@@ -150,6 +96,45 @@ export default function StepCounterScreen() {
     return num.toLocaleString();
   };
 
+  useEffect(() => {
+    const initSubscription = async () => {
+      subscription.current = await subscribe();
+    };
+    
+    initSubscription();
+    
+    return () => {
+      if (subscription.current) {
+        subscription.current.remove();
+      }
+    };
+  }, []);
+
+  if (isPedometerAvailable === 'checking') {
+    return (
+      <ThemedView style={styles.container}>
+        <View style={styles.loadingContainer}>
+          <TextBox type="body1">만보기 확인 중...</TextBox>
+        </View>
+      </ThemedView>
+    );
+  }
+
+  if (isPedometerAvailable === 'false') {
+    return (
+      <ThemedView style={styles.container}>
+        <View style={styles.errorContainer}>
+          <TextBox type="title2" style={styles.errorTitle}>
+            만보기 사용 불가
+          </TextBox>
+          <TextBox type="body2" style={styles.errorText}>
+            이 기기에서는 만보기 기능을 사용할 수 없습니다.
+          </TextBox>
+        </View>
+      </ThemedView>
+    );
+  }
+
   return (
     <ThemedView style={styles.container}>
       <ScrollView
@@ -161,13 +146,13 @@ export default function StepCounterScreen() {
             만보기
           </TextBox>
 
-          {/* 걸음 수 표시 */}
+          {/* 실시간 걸음 수 표시 */}
           <View style={styles.stepDisplay}>
             <TextBox
               type="title2"
               style={[styles.stepCount, { color: Colors.primary }]}
             >
-              {formatNumber(currentSteps)}
+              {formatNumber(currentStepCount)}
             </TextBox>
             <TextBox type="body2" style={styles.stepLabel}>
               걸음
@@ -197,7 +182,7 @@ export default function StepCounterScreen() {
               />
             </View>
             <TextBox type="body3" style={styles.progressText}>
-              {formatNumber(currentSteps)} / {formatNumber(dailyGoal)} 걸음
+              {formatNumber(currentStepCount)} / {formatNumber(dailyGoal)} 걸음
               {getProgressPercentage() >= 100 && " 🎉"}
             </TextBox>
           </View>
@@ -233,7 +218,11 @@ export default function StepCounterScreen() {
                   onChangeText={setGoalInput}
                   placeholder="목표 걸음 수 입력"
                   keyboardType="numeric"
-                  style={styles.goalInput}
+                  style={[styles.goalInput, { 
+                    backgroundColor: Colors.background,
+                    borderColor: Colors.border,
+                    color: Colors.text 
+                  }]}
                 />
                 <View style={styles.goalInputButtons}>
                   <Button
@@ -267,25 +256,37 @@ export default function StepCounterScreen() {
             )}
           </View>
 
-          {/* 추적 제어 */}
-          <View style={styles.controlSection}>
-            <Button
-              title={isTracking ? "추적 중지" : "추적 시작"}
-              onPress={isTracking ? stopTracking : startTracking}
-              style={[
-                styles.trackButton,
-                { backgroundColor: isTracking ? Colors.error : Colors.primary },
-              ]}
-            />
-
-            <Button
-              title="걸음 수 초기화"
-              onPress={resetSteps}
-              style={[
-                styles.resetButton,
-                { backgroundColor: Colors.secondary },
-              ]}
-            />
+          {/* 추적 상태 */}
+          <View style={styles.statusSection}>
+            <View style={styles.statusItem}>
+              <TextBox type="body2" style={styles.statusLabel}>
+                추적 상태
+              </TextBox>
+              <TextBox 
+                type="body2" 
+                style={[
+                  styles.statusValue, 
+                  { color: isTracking ? Colors.success : Colors.error }
+                ]}
+              >
+                {isTracking ? "실시간 추적 중" : "추적 중지됨"}
+              </TextBox>
+            </View>
+            
+            <View style={styles.statusItem}>
+              <TextBox type="body2" style={styles.statusLabel}>
+                만보기 지원
+              </TextBox>
+              <TextBox 
+                type="body2" 
+                style={[
+                  styles.statusValue, 
+                  { color: Colors.success }
+                ]}
+              >
+                지원됨
+              </TextBox>
+            </View>
           </View>
 
           {/* 통계 정보 */}
@@ -313,7 +314,7 @@ export default function StepCounterScreen() {
                   type="title3"
                   style={[styles.statValue, { color: Colors.primary }]}
                 >
-                  {formatNumber(Math.max(0, dailyGoal - currentSteps))}
+                  {formatNumber(Math.max(0, dailyGoal - currentStepCount))}
                 </TextBox>
               </View>
 
@@ -359,7 +360,7 @@ export default function StepCounterScreen() {
                   type="title3"
                   style={[styles.statValue, { color: Colors.primary }]}
                 >
-                  {((currentSteps * 0.7) / 1000).toFixed(1)}km
+                  {((currentStepCount * 0.7) / 1000).toFixed(1)}km
                 </TextBox>
               </View>
 
@@ -382,7 +383,7 @@ export default function StepCounterScreen() {
                   type="title3"
                   style={[styles.statValue, { color: Colors.primary }]}
                 >
-                  {Math.round(currentSteps * 0.04)}kcal
+                  {Math.round(currentStepCount * 0.04)}kcal
                 </TextBox>
               </View>
             </View>
@@ -405,11 +406,11 @@ export default function StepCounterScreen() {
               type="body3"
               style={[styles.helpText, { color: Colors.textSecondary }]}
             >
-              • "추적 시작" 버튼을 눌러 걸음 수 측정을 시작하세요
-              {"\n"}• 가속도 센서를 통해 걸음을 자동으로 감지합니다
+              • 앱을 실행하면 자동으로 실시간 걸음수 추적이 시작됩니다
+              {"\n"}• 기기의 만보기 센서를 통해 정확한 걸음수를 측정합니다
               {"\n"}• 일일 목표를 설정하고 건강한 생활을 만들어보세요
-              {"\n"}• 앱을 종료해도 걸음 수는 계속 측정됩니다
               {"\n"}• 목표 달성 시 축하 알림을 받을 수 있습니다
+              {"\n"}• 앱을 종료해도 걸음 수는 계속 측정됩니다
             </TextBox>
           </View>
         </View>
@@ -421,6 +422,25 @@ export default function StepCounterScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  errorTitle: {
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  errorText: {
+    textAlign: 'center',
+    color: Colors.textSecondary,
   },
   scrollView: {
     flex: 1,
@@ -495,7 +515,11 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   goalInput: {
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 12,
     marginBottom: 10,
+    fontSize: 16,
   },
   goalInputButtons: {
     flexDirection: "row",
@@ -511,16 +535,25 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "600",
   },
-  controlSection: {
-    flexDirection: "row",
-    gap: 15,
+  statusSection: {
     marginBottom: 30,
+    padding: 20,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    backgroundColor: Colors.background,
   },
-  trackButton: {
-    flex: 1,
+  statusItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
   },
-  resetButton: {
-    flex: 1,
+  statusLabel: {
+    color: Colors.textSecondary,
+  },
+  statusValue: {
+    fontWeight: "600",
   },
   statsSection: {
     marginBottom: 30,
