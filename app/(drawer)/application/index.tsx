@@ -1,67 +1,258 @@
-import { ThemedView } from '@/components/ThemedView';
-import { Colors } from '@/constants/Colors';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ThemedView } from "@/components/ThemedView";
+import { Colors } from "@/constants/Colors";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React from "react";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function ApplicationScreen() {
   const router = useRouter() as any;
 
   const appFeatures = [
     // 기본 앱 기능
-    { title: '할 일 관리', icon: 'checkmark-circle', route: '/(drawer)/application/basic/todo', color: '#4CAF50', category: '기본 앱' },
-    { title: '날씨 확인', icon: 'partly-sunny', route: '/(drawer)/application/basic/weather', color: '#2196F9', category: '기본 앱' },
-    { title: '메모 작성', icon: 'document-text', route: '/(drawer)/application/basic/notes', color: '#FF9800', category: '기본 앱' },
-    { title: '영화 정보', icon: 'film', route: '/(drawer)/application/basic/movies', color: '#E91E63', category: '기본 앱' },
-    { title: '캘린더', icon: 'calendar', route: '/(drawer)/application/basic/calendar', color: '#607D8B', category: '기본 앱' },
-    { title: '갤러리', icon: 'images', route: '/(drawer)/application/basic/gallery', color: '#795548', category: '기본 앱' },
-    { title: '쇼핑', icon: 'cart', route: '/(drawer)/application/basic/shop', color: '#FF5722', category: '기본 앱' },
-    { title: '폼 예제', icon: 'list', route: '/(drawer)/application/basic/form', color: '#3F51B5', category: '기본 앱' },
-    { title: '액션 시트', icon: 'menu', route: '/(drawer)/application/basic/action-sheet', color: '#009688', category: '기본 앱' },
-    { title: '모달', icon: 'square', route: '/(drawer)/application/basic/modal', color: '#FFC107', category: '기본 앱' },
-    { title: '스텝 카운터', icon: 'footsteps', route: '/(drawer)/application/basic/step-counter', color: '#00BCD4', category: '기본 앱' },
-    { title: '계산기', icon: 'calculator', route: '/(drawer)/application/basic/calculator', color: '#9C27B0', category: '기본 앱' },
-    { title: '이벤트 테스트', icon: 'hand-left', route: '/(drawer)/application/basic/event-test', color: '#FF5722', category: '기본 앱' },
-    { title: '대화상자 & 팝업 & 알림', icon: 'notifications', route: '/(drawer)/application/basic/dialog-popup-notification', color: '#F44336', category: '기본 앱' },
-    { title: '리스트 뷰', icon: 'list', route: '/(drawer)/application/basic/list-view', color: '#2196F3', category: '기본 앱' },
-    
+    {
+      title: "할 일 관리",
+      icon: "checkmark-circle",
+      route: "/(drawer)/application/basic/todo",
+      color: "#4CAF50",
+      category: "기본 앱",
+    },
+    {
+      title: "날씨 확인",
+      icon: "partly-sunny",
+      route: "/(drawer)/application/basic/weather",
+      color: "#2196F9",
+      category: "기본 앱",
+    },
+    {
+      title: "메모 작성",
+      icon: "document-text",
+      route: "/(drawer)/application/basic/notes",
+      color: "#FF9800",
+      category: "기본 앱",
+    },
+    {
+      title: "영화 정보",
+      icon: "film",
+      route: "/(drawer)/application/basic/movies",
+      color: "#E91E63",
+      category: "기본 앱",
+    },
+    {
+      title: "캘린더",
+      icon: "calendar",
+      route: "/(drawer)/application/basic/calendar",
+      color: "#607D8B",
+      category: "기본 앱",
+    },
+    {
+      title: "갤러리",
+      icon: "images",
+      route: "/(drawer)/application/basic/gallery",
+      color: "#795548",
+      category: "기본 앱",
+    },
+    {
+      title: "쇼핑",
+      icon: "cart",
+      route: "/(drawer)/application/basic/shop",
+      color: "#FF5722",
+      category: "기본 앱",
+    },
+    {
+      title: "폼 예제",
+      icon: "list",
+      route: "/(drawer)/application/basic/form",
+      color: "#3F51B5",
+      category: "기본 앱",
+    },
+    {
+      title: "액션 시트",
+      icon: "menu",
+      route: "/(drawer)/application/basic/action-sheet",
+      color: "#009688",
+      category: "기본 앱",
+    },
+    {
+      title: "모달",
+      icon: "square",
+      route: "/(drawer)/application/basic/modal",
+      color: "#FFC107",
+      category: "기본 앱",
+    },
+    {
+      title: "스텝 카운터",
+      icon: "footsteps",
+      route: "/(drawer)/application/basic/step-counter",
+      color: "#00BCD4",
+      category: "기본 앱",
+    },
+    {
+      title: "계산기",
+      icon: "calculator",
+      route: "/(drawer)/application/basic/calculator",
+      color: "#9C27B0",
+      category: "기본 앱",
+    },
+    {
+      title: "이벤트 테스트",
+      icon: "hand-left",
+      route: "/(drawer)/application/basic/event-test",
+      color: "#FF5722",
+      category: "기본 앱",
+    },
+    {
+      title: "대화상자 & 팝업 & 알림",
+      icon: "notifications",
+      route: "/(drawer)/application/basic/dialog-popup-notification",
+      color: "#F44336",
+      category: "기본 앱",
+    },
+    {
+      title: "리스트 뷰",
+      icon: "list",
+      route: "/(drawer)/application/basic/list-view",
+      color: "#2196F3",
+      category: "기본 앱",
+    },
+    {
+      title: "SQLite 데이터베이스",
+      icon: "server",
+      route: "/(drawer)/application/basic/sqlite",
+      color: "#4CAF50",
+      category: "기본 앱",
+    },
+
     // 네이티브 기능
-    { title: 'Mini Health Tracker', icon: 'fitness', route: '/(drawer)/application/native/mini-health-tracker', color: '#4CAF50', category: '네이티브' },
-    { title: 'Sensor Playground', icon: 'phone-portrait', route: '/(drawer)/application/native/sensor-playground', color: '#2196F3', category: '네이티브' },
-    { title: 'Media Notes', icon: 'camera', route: '/(drawer)/application/native/media-notes', color: '#FF9800', category: '네이티브' },
-    { title: 'Trip Logger', icon: 'location', route: '/(drawer)/application/native/trip-logger', color: '#9C27B0', category: '네이티브' },
-    { title: 'Utility Kit', icon: 'settings', route: '/(drawer)/application/native/utility-kit', color: '#E91E63', category: '네이티브' },
-    { title: 'Simple Shop', icon: 'cart', route: '/(drawer)/application/native/simple-shop', color: '#607D8B', category: '네이티브' },
-    { title: 'Secure Notes', icon: 'shield-checkmark', route: '/(drawer)/application/native/secure-notes', color: '#795548', category: '네이티브' },
-    { title: 'Mini File Explorer', icon: 'folder', route: '/(drawer)/application/native/mini-file-explorer', color: '#FF5722', category: '네이티브' },
-    
+    {
+      title: "Mini Health Tracker",
+      icon: "fitness",
+      route: "/(drawer)/application/native/mini-health-tracker",
+      color: "#4CAF50",
+      category: "네이티브",
+    },
+    {
+      title: "Sensor Playground",
+      icon: "phone-portrait",
+      route: "/(drawer)/application/native/sensor-playground",
+      color: "#2196F3",
+      category: "네이티브",
+    },
+    {
+      title: "Media Notes",
+      icon: "camera",
+      route: "/(drawer)/application/native/media-notes",
+      color: "#FF9800",
+      category: "네이티브",
+    },
+    {
+      title: "Trip Logger",
+      icon: "location",
+      route: "/(drawer)/application/native/trip-logger",
+      color: "#9C27B0",
+      category: "네이티브",
+    },
+    {
+      title: "Utility Kit",
+      icon: "settings",
+      route: "/(drawer)/application/native/utility-kit",
+      color: "#E91E63",
+      category: "네이티브",
+    },
+    {
+      title: "Simple Shop",
+      icon: "cart",
+      route: "/(drawer)/application/native/simple-shop",
+      color: "#607D8B",
+      category: "네이티브",
+    },
+    {
+      title: "Secure Notes",
+      icon: "shield-checkmark",
+      route: "/(drawer)/application/native/secure-notes",
+      color: "#795548",
+      category: "네이티브",
+    },
+    {
+      title: "Mini File Explorer",
+      icon: "folder",
+      route: "/(drawer)/application/native/mini-file-explorer",
+      color: "#FF5722",
+      category: "네이티브",
+    },
+
     // 애니메이션
-    { title: 'Quiz Hero', icon: 'help-circle', route: '/(drawer)/application/animation/quiz-hero', color: '#E91E63', category: '애니메이션' },
-    { title: 'Money Journey', icon: 'wallet', route: '/(drawer)/application/animation/money-journey', color: '#607D8B', category: '애니메이션' },
-    { title: 'Cook Explorer', icon: 'restaurant', route: '/(drawer)/application/animation/cook-explorer', color: '#795548', category: '애니메이션' },
-    { title: 'Travel Dreams', icon: 'airplane', route: '/(drawer)/application/animation/travel-dreams', color: '#FF5722', category: '애니메이션' },
-    { title: 'MindFlow', icon: 'leaf', route: '/(drawer)/application/animation/mind-flow', color: '#00BCD4', category: '애니메이션' },
+    {
+      title: "Quiz Hero",
+      icon: "help-circle",
+      route: "/(drawer)/application/animation/quiz-hero",
+      color: "#E91E63",
+      category: "애니메이션",
+    },
+    {
+      title: "Money Journey",
+      icon: "wallet",
+      route: "/(drawer)/application/animation/money-journey",
+      color: "#607D8B",
+      category: "애니메이션",
+    },
+    {
+      title: "Cook Explorer",
+      icon: "restaurant",
+      route: "/(drawer)/application/animation/cook-explorer",
+      color: "#795548",
+      category: "애니메이션",
+    },
+    {
+      title: "Travel Dreams",
+      icon: "airplane",
+      route: "/(drawer)/application/animation/travel-dreams",
+      color: "#FF5722",
+      category: "애니메이션",
+    },
+    {
+      title: "MindFlow",
+      icon: "leaf",
+      route: "/(drawer)/application/animation/mind-flow",
+      color: "#00BCD4",
+      category: "애니메이션",
+    },
   ];
 
-  const categories = ['기본 앱', '네이티브', '애니메이션'];
+  const categories = ["기본 앱", "네이티브", "애니메이션"];
 
   return (
     <ThemedView style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
         {categories.map((category) => (
           <View key={category} style={styles.categorySection}>
             <Text style={styles.categoryTitle}>{category}</Text>
             <View style={styles.featureGrid}>
               {appFeatures
-                .filter(feature => feature.category === category)
+                .filter((feature) => feature.category === category)
                 .map((feature, index) => (
                   <TouchableOpacity
                     key={index}
-                    style={[styles.featureItem, { backgroundColor: feature.color }]}
+                    style={[
+                      styles.featureItem,
+                      { backgroundColor: feature.color },
+                    ]}
                     onPress={() => router.push(feature.route)}
                   >
-                    <Ionicons name={feature.icon as any} size={28} color="white" />
+                    <Ionicons
+                      name={feature.icon as any}
+                      size={28}
+                      color="white"
+                    />
                     <Text style={styles.featureTitle}>{feature.title}</Text>
                   </TouchableOpacity>
                 ))}
@@ -84,42 +275,40 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
+    fontWeight: "bold",
+    color: "white",
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: 'rgba(255, 255, 255, 0.8)',
+    color: "rgba(255, 255, 255, 0.8)",
   },
   scrollView: {
     flex: 1,
     padding: 20,
     paddingTop: 20,
   },
-  categorySection: {
-    
-  },
+  categorySection: {},
   categoryTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 15,
     color: Colors.light.text,
   },
   featureGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
   },
   featureItem: {
-    width: '48%',
+    width: "48%",
     aspectRatio: 1,
     borderRadius: 16,
     padding: 16,
     marginBottom: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -129,10 +318,10 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   featureTitle: {
-    color: 'white',
+    color: "white",
     fontSize: 14,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginTop: 8,
   },
 });
